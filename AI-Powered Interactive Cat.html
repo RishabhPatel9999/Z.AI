@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Interactive Cat Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: none;
+            position: relative;
+        }
+
+        /* Dynamic background that changes based on time */
+        .dynamic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            transition: all 2s ease;
+        }
+
+        .morning-bg {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+        }
+
+        .day-bg {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+
+        .evening-bg {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+        }
+
+        .night-bg {
+            background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+        }
+
+        /* Particle effects */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Custom cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.1s ease;
+            animation: cursorPulse 2s infinite;
+        }
+
+        @keyframes cursorPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* AI Cat Container */
+        .ai-cat {
+            position: fixed;
+            width: 100px;
+            height: 100px;
+            pointer-events: none;
+            z-index: 9999;
+            transition: none;
+            transform-origin: center bottom;
+        }
+
+        /* Cat Body with enhanced design */
+        .cat-body {
+            position: relative;
+            width: 70px;
+            height: 60px;
+            background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+            border-radius: 50% 50% 40% 40%;
+            margin: 25px auto 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.95); }
+        }
+
+        /* Cat Head with AI indicator */
+        .cat-head {
+            position: absolute;
+            width: 60px;
+            height: 55px;
+            background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+            border-radius: 50%;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* AI indicator */
+        .ai-indicator {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #00ff00;
+            border-radius: 50%;
+            top: -5px;
+            right: 5px;
+            animation: aiPulse 2s infinite;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        @keyframes aiPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        /* Enhanced ears with sensors */
+        .ear {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .ear-left {
+            border-width: 0 10px 25px 10px;
+            border-color: transparent transparent #ff8c00 transparent;
+            top: -20px;
+            left: 10px;
+            transform: rotate(-15deg);
+            animation: earTwitchLeft 4s infinite;
+        }
+
+        .ear-right {
+            border-width: 0 10px 25px 10px;
+            border-color: transparent transparent #ff8c00 transparent;
+            top: -20px;
+            right: 10px;
+            transform: rotate(15deg);
+            animation: earTwitchRight 4s infinite;
+        }
+
+        @keyframes earTwitchLeft {
+            0%, 90%, 100% { transform: rotate(-15deg); }
+            92%, 96% { transform: rotate(-25deg); }
+            94% { transform: rotate(-5deg); }
+        }
+
+        @keyframes earTwitchRight {
+            0%, 88%, 100% { transform: rotate(15deg); }
+            90%, 94% { transform: rotate(25deg); }
+            92% { transform: rotate(5deg); }
+        }
+
+        /* Enhanced eyes with emotion */
+        .eye {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #333;
+            border-radius: 50%;
+            top: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .eye-left {
+            left: 15px;
+        }
+
+        .eye-right {
+            right: 15px;
+        }
+
+        .pupil {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.1s ease;
+        }
+
+        /* Nose */
+        .nose {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 5px 5px 5px;
+            border-color: transparent transparent #ff1493 transparent;
+            top: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Mouth with expressions */
+        .mouth {
+            position: absolute;
+            width: 18px;
+            height: 10px;
+            border: 2px solid #333;
+            border-top: none;
+            border-radius: 0 0 50% 50%;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s ease;
+        }
+
+        /* Whiskers */
+        .whisker {
+            position: absolute;
+            width: 25px;
+            height: 1px;
+            background: #333;
+            top: 24px;
+        }
+
+        .whisker-left-1 {
+            left: -20px;
+            transform: rotate(-10deg);
+        }
+
+        .whisker-left-2 {
+            left: -20px;
+            top: 28px;
+            transform: rotate(-20deg);
+        }
+
+        .whisker-right-1 {
+            right: -20px;
+            transform: rotate(10deg);
+        }
+
+        .whisker-right-2 {
+            right: -20px;
+            top: 28px;
+            transform: rotate(20deg);
+        }
+
+        /* Enhanced tail */
+        .tail {
+            position: absolute;
+            width: 50px;
+            height: 10px;
+            background: linear-gradient(90deg, #ff8c00 0%, #ffa500 100%);
+            border-radius: 50%;
+            bottom: 15px;
+            right: -35px;
+            transform-origin: left center;
+            animation: tailWag 2s ease-in-out infinite;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes tailWag {
+            0%, 100% { transform: rotate(-20deg); }
+            25% { transform: rotate(30deg); }
+            50% { transform: rotate(-10deg); }
+            75% { transform: rotate(25deg); }
+        }
+
+        /* Paws */
+        .paw {
+            position: absolute;
+            width: 18px;
+            height: 12px;
+            background: #ff8c00;
+            border-radius: 50%;
+            bottom: -5px;
+            animation: pawStep 0.5s ease-in-out infinite alternate;
+        }
+
+        .paw-left {
+            left: 12px;
+            animation-delay: 0.25s;
+        }
+
+        .paw-right {
+            right: 12px;
+        }
+
+        @keyframes pawStep {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-3px); }
+        }
+
+        /* Walking animation */
+        .ai-cat.walking .cat-body {
+            animation: walk 0.5s ease-in-out infinite, breathe 3s ease-in-out infinite;
+        }
+
+        @keyframes walk {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        /* AI Chat Bubble */
+        .ai-bubble {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 9998;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            max-width: 300px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .ai-bubble.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ai-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px 10px 0 10px;
+            border-color: rgba(255, 255, 255, 0.9) transparent transparent transparent;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            z-index: 1000;
+            min-width: 250px;
+        }
+
+        .control-panel h3 {
+            margin-bottom: 15px;
+            color: #ffd700;
+            font-size: 18px;
+        }
+
+        .control-item {
+            margin-bottom: 15px;
+        }
+
+        .control-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 5px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+        }
+
+        .control-item input[type="range"]::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+        }
+
+        .control-item button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
+        .control-item button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .control-item button.active {
+            background: #ffd700;
+            color: #333;
+        }
+
+        /* Status Panel */
+        .status-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .status-panel h3 {
+            margin-bottom: 15px;
+            color: #ffd700;
+            font-size: 18px;
+        }
+
+        .status-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .status-value {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        /* Emotion indicators */
+        .emotion-indicator {
+            display: flex;
+            margin-top: 15px;
+            justify-content: space-between;
+        }
+
+        .emotion {
+            font-size: 24px;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .emotion.active {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        /* Interactive toys */
+        .toy {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ff69b4 0%, #ff1493 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .toy:hover {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Voice indicator */
+        .voice-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: white;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .voice-indicator.active {
+            opacity: 1;
+        }
+
+        .voice-wave {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+
+        .voice-bar {
+            width: 3px;
+            height: 20px;
+            background: #ffd700;
+            border-radius: 3px;
+            animation: wave 0.5s ease-in-out infinite alternate;
+        }
+
+        .voice-bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .voice-bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .voice-bar:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .voice-bar:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes wave {
+            0% { height: 10px; }
+            100% { height: 30px; }
+        }
+
+        /* Learning progress */
+        .learning-progress {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            color: white;
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .learning-progress h4 {
+            margin-bottom: 10px;
+            color: #ffd700;
+            font-size: 16px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700 0%, #ffed4e 100%);
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            text-align: right;
+        }
+
+        /* Cat mood states */
+        .ai-cat.happy .eye {
+            animation: happyEyes 2s ease-in-out infinite;
+        }
+
+        @keyframes happyEyes {
+            0%, 100% { height: 15px; }
+            50% { height: 10px; }
+        }
+
+        .ai-cat.sleeping .eye {
+            height: 2px;
+        }
+
+        .ai-cat.sleeping .tail {
+            animation: tailSleep 3s ease-in-out infinite;
+        }
+
+        @keyframes tailSleep {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(-5deg); }
+        }
+
+        .ai-cat.curious .ear-left {
+            animation: earPerkLeft 0.5s ease infinite alternate;
+        }
+
+        .ai-cat.curious .ear-right {
+            animation: earPerkRight 0.5s ease infinite alternate;
+        }
+
+        @keyframes earPerkLeft {
+            0% { transform: rotate(-15deg); }
+            100% { transform: rotate(-30deg); }
+        }
+
+        @keyframes earPerkRight {
+            0% { transform: rotate(15deg); }
+            100% { transform: rotate(30deg); }
+        }
+
+        .ai-cat.playful .mouth {
+            border-radius: 50% 50% 50% 50%;
+            height: 15px;
+        }
+
+        /* Content */
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 2rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instructions li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .instructions li:before {
+            content: "🐾";
+            position: absolute;
+            left: 0;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Notification system */
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10001;
+            max-width: 400px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .notification.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .notification h3 {
+            margin-bottom: 10px;
+            color: #ff8c00;
+        }
+
+        .notification p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .notification button {
+            background: #ff8c00;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification button:hover {
+            background: #ff6b00;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Dynamic background -->
+    <div class="dynamic-bg" id="dynamicBg"></div>
+    
+    <!-- Particle effects -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Custom cursor -->
+    <div class="cursor" id="cursor"></div>
+
+    <!-- AI Cat -->
+    <div class="ai-cat" id="aiCat">
+        <div class="cat-body">
+            <div class="cat-head">
+                <div class="ai-indicator"></div>
+                <div class="ear ear-left"></div>
+                <div class="ear ear-right"></div>
+                <div class="eye eye-left">
+                    <div class="pupil" id="pupilLeft"></div>
+                </div>
+                <div class="eye eye-right">
+                    <div class="pupil" id="pupilRight"></div>
+                </div>
+                <div class="nose"></div>
+                <div class="mouth"></div>
+                <div class="whisker whisker-left-1"></div>
+                <div class="whisker whisker-left-2"></div>
+                <div class="whisker whisker-right-1"></div>
+                <div class="whisker whisker-right-2"></div>
+            </div>
+            <div class="tail"></div>
+            <div class="paw paw-left"></div>
+            <div class="paw paw-right"></div>
+        </div>
+    </div>
+
+    <!-- AI Chat Bubble -->
+    <div class="ai-bubble" id="aiBubble"></div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <h3>🎮 AI Controls</h3>
+        <div class="control-item">
+            <label for="intelligence">Intelligence Level</label>
+            <input type="range" id="intelligence" min="1" max="10" value="5">
+            <span id="intelligenceValue">5</span>
+        </div>
+        <div class="control-item">
+            <label for="personality">Personality</label>
+            <button class="personality-btn active" data-personality="friendly">Friendly</button>
+            <button class="personality-btn" data-personality="playful">Playful</button>
+            <button class="personality-btn" data-personality="curious">Curious</button>
+            <button class="personality-btn" data-personality="lazy">Lazy</button>
+        </div>
+        <div class="control-item">
+            <label>AI Features</label>
+            <button id="voiceBtn" class="feature-btn">🎤 Voice</button>
+            <button id="learningBtn" class="feature-btn active">🧠 Learning</button>
+            <button id="predictionBtn" class="feature-btn">🔮 Prediction</button>
+        </div>
+        <div class="control-item">
+            <button id="resetBtn">🔄 Reset AI</button>
+        </div>
+    </div>
+
+    <!-- Status Panel -->
+    <div class="status-panel">
+        <h3>📊 Cat Status</h3>
+        <div class="status-item">
+            <span>Mood:</span>
+            <span class="status-value" id="moodStatus">Happy</span>
+        </div>
+        <div class="status-item">
+            <span>Energy:</span>
+            <span class="status-value" id="energyStatus">80%</span>
+        </div>
+        <div class="status-item">
+            <span>Hunger:</span>
+            <span class="status-value" id="hungerStatus">40%</span>
+        </div>
+        <div class="status-item">
+            <span>Speed:</span>
+            <span class="status-value" id="speedStatus">0 px/s</span>
+        </div>
+        <div class="emotion-indicator">
+            <span class="emotion active" data-emotion="happy">😊</span>
+            <span class="emotion" data-emotion="sleepy">😴</span>
+            <span class="emotion" data-emotion="playful">🤪</span>
+            <span class="emotion" data-emotion="curious">🤔</span>
+            <span class="emotion" data-emotion="hungry">🍖</span>
+        </div>
+    </div>
+
+    <!-- Voice Indicator -->
+    <div class="voice-indicator" id="voiceIndicator">
+        <span>🎤 Listening...</span>
+        <div class="voice-wave">
+            <div class="voice-bar"></div>
+            <div class="voice-bar"></div>
+            <div class="voice-bar"></div>
+            <div class="voice-bar"></div>
+            <div class="voice-bar"></div>
+        </div>
+    </div>
+
+    <!-- Learning Progress -->
+    <div class="learning-progress">
+        <h4>🧠 AI Learning</h4>
+        <div class="progress-bar">
+            <div class="progress-fill" id="learningProgress"></div>
+        </div>
+        <div class="progress-label" id="learningLabel">0% Complete</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <h1>🤖 AI-Powered Interactive Cat</h1>
+        <p>Meet your intelligent feline companion powered by advanced AI! This cat learns from your interactions, responds to your voice, and develops a unique personality over time.</p>
+        
+        <div class="instructions">
+            <h3>Advanced Features:</h3>
+            <ul>
+                <li>AI-powered personality that adapts to you</li>
+                <li>Voice interaction capabilities</li>
+                <li>Real-time mood and behavior analysis</li>
+                <li>Learning system that remembers preferences</li>
+                <li>Predictive behavior based on patterns</li>
+                <li>Dynamic environment that changes with time</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Interactive toys -->
+    <div class="toy" style="top: 20%; left: 10%;"></div>
+    <div class="toy" style="top: 60%; left: 80%;"></div>
+    <div class="toy" style="top: 40%; left: 50%;"></div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <h3 id="notificationTitle">AI Update</h3>
+        <p id="notificationMessage">Your cat has learned something new!</p>
+        <button id="notificationBtn">Awesome!</button>
+    </div>
+
+    <script>
+        // AI Cat System
+        class AICatSystem {
+            constructor() {
+                this.cat = document.getElementById('aiCat');
+                this.cursor = document.getElementById('cursor');
+                this.bubble = document.getElementById('aiBubble');
+                this.particles = document.getElementById('particles');
+                this.dynamicBg = document.getElementById('dynamicBg');
+                
+                // AI Properties
+                this.intelligence = 5;
+                this.personality = 'friendly';
+                this.mood = 'happy';
+                this.energy = 80;
+                this.hunger = 40;
+                this.learningProgress = 0;
+                this.isVoiceActive = false;
+                this.isLearningEnabled = true;
+                this.isPredictionEnabled = false;
+                
+                // Position tracking
+                this.catX = window.innerWidth / 2;
+                this.catY = window.innerHeight / 2;
+                this.targetX = this.catX;
+                this.targetY = this.catY;
+                this.mouseX = this.catX;
+                this.mouseY = this.catY;
+                this.lastMouseX = this.catX;
+                this.lastMouseY = this.catY;
+                this.mouseSpeed = 0;
+                this.isMoving = false;
+                this.moveTimer = null;
+                
+                // AI Memory
+                this.memory = {
+                    interactions: 0,
+                    favoriteToys: [],
+                    userPatterns: [],
+                    learnedBehaviors: [],
+                    voiceCommands: [],
+                    timeSpent: 0
+                };
+                
+                // AI Responses
+                this.responses = {
+                    friendly: [
+                        "I'm so happy to see you!",
+                        "You're my favorite human!",
+                        "Let's be friends forever!",
+                        "I love spending time with you!",
+                        "You make me so happy!"
+                    ],
+                    playful: [
+                        "Let's play! Chase me!",
+                        "That was fun! Again?",
+                        "I'm ready for more games!",
+                        "You're great at playing!",
+                        "Let's try something new!"
+                    ],
+                    curious: [
+                        "What's that? I'm curious!",
+                        "I wonder what happens if...",
+                        "That's interesting! Tell me more!",
+                        "I'm learning so much with you!",
+                        "Can we explore together?"
+                    ],
+                    lazy: [
+                        "Can we just relax here?",
+                        "I'm too comfortable to move...",
+                        "Maybe later... I'm napping now.",
+                        "This spot is perfect for resting.",
+                        "Zzz... just kidding... or am I?"
+                    ]
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.createParticles();
+                this.updateTimeOfDay();
+                this.startAIProcessing();
+                this.animateCat();
+                
+                // Start time tracking
+                setInterval(() => {
+                    this.memory.timeSpent++;
+                    this.updateLearningProgress();
+                }, 1000);
+                
+                // Update status periodically
+                setInterval(() => {
+                    this.updateCatStatus();
+                }, 2000);
+                
+                // AI thinking process
+                setInterval(() => {
+                    this.aiThink();
+                }, 5000);
+            }
+            
+            setupEventListeners() {
+                // Mouse movement
+                document.addEventListener('mousemove', (e) => {
+                    this.mouseX = e.clientX;
+                    this.mouseY = e.clientY;
+                    
+                    // Update cursor position
+                    this.cursor.style.left = this.mouseX - 10 + 'px';
+                    this.cursor.style.top = this.mouseY - 10 + 'px';
+                    
+                    // Calculate mouse speed
+                    const dx = this.mouseX - this.lastMouseX;
+                    const dy = this.mouseY - this.lastMouseY;
+                    this.mouseSpeed = Math.sqrt(dx * dx + dy * dy);
+                    document.getElementById('speedStatus').textContent = Math.round(this.mouseSpeed * 10) + ' px/s';
+                    
+                    this.lastMouseX = this.mouseX;
+                    this.lastMouseY = this.mouseY;
+                    
+                    // Set target position for cat (with offset)
+                    this.targetX = this.mouseX - 50;
+                    this.targetY = this.mouseY - 50;
+                    
+                    // Check if cat should be walking
+                    this.isMoving = true;
+                    this.cat.classList.add('walking');
+                    this.cat.classList.remove('sleeping');
+                    
+                    // Clear existing timer
+                    clearTimeout(this.moveTimer);
+                    
+                    // Set timer to stop walking
+                    this.moveTimer = setTimeout(() => {
+                        this.isMoving = false;
+                        this.cat.classList.remove('walking');
+                        
+                        // Make cat sleepy if not moving for a while
+                        setTimeout(() => {
+                            if (!this.isMoving && this.energy < 30) {
+                                this.cat.classList.add('sleeping');
+                                this.mood = 'sleepy';
+                                this.updateMoodDisplay();
+                            }
+                        }, 3000);
+                    }, 500);
+                    
+                    // Update cat mood based on speed
+                    if (this.mouseSpeed > 20) {
+                        this.cat.classList.add('happy');
+                        this.mood = 'playful';
+                    } else {
+                        this.cat.classList.remove('happy');
+                    }
+                    
+                    this.updateMoodDisplay();
+                });
+                
+                // Toy interactions
+                document.querySelectorAll('.toy').forEach(toy => {
+                    toy.addEventListener('click', () => {
+                        this.interactWithToy(toy);
+                    });
+                });
+                
+                // Control panel
+                document.getElementById('intelligence').addEventListener('input', (e) => {
+                    this.intelligence = parseInt(e.target.value);
+                    document.getElementById('intelligenceValue').textContent = this.intelligence;
+                });
+                
+                document.querySelectorAll('.personality-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.personality-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.personality = btn.dataset.personality;
+                        this.showNotification('Personality Changed', `Your cat is now ${this.personality}!`);
+                    });
+                });
+                
+                document.getElementById('voiceBtn').addEventListener('click', () => {
+                    this.toggleVoiceInteraction();
+                });
+                
+                document.getElementById('learningBtn').addEventListener('click', () => {
+                    this.toggleLearning();
+                });
+                
+                document.getElementById('predictionBtn').addEventListener('click', () => {
+                    this.togglePrediction();
+                });
+                
+                document.getElementById('resetBtn').addEventListener('click', () => {
+                    this.resetAI();
+                });
+                
+                document.getElementById('notificationBtn').addEventListener('click', () => {
+                    document.getElementById('notification').classList.remove('active');
+                });
+                
+                // Keyboard controls
+                document.addEventListener('keydown', (e) => {
+                    switch(e.key) {
+                        case ' ':
+                            this.makeCatJump();
+                            break;
+                        case 's':
+                            this.toggleSleep();
+                            break;
+                        case 't':
+                            this.catTalk();
+                            break;
+                        case 'v':
+                            this.toggleVoiceInteraction();
+                            break;
+                    }
+                });
+            }
+            
+            createParticles() {
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 15 + 's';
+                    particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                    this.particles.appendChild(particle);
+                }
+            }
+            
+            updateTimeOfDay() {
+                const hour = new Date().getHours();
+                const bg = document.getElementById('dynamicBg');
+                
+                if (hour >= 6 && hour < 12) {
+                    bg.className = 'dynamic-bg morning-bg';
+                } else if (hour >= 12 && hour < 18) {
+                    bg.className = 'dynamic-bg day-bg';
+                } else if (hour >= 18 && hour < 22) {
+                    bg.className = 'dynamic-bg evening-bg';
+                } else {
+                    bg.className = 'dynamic-bg night-bg';
+                }
+                
+                // Update every minute
+                setTimeout(() => this.updateTimeOfDay(), 60000);
+            }
+            
+            animateCat() {
+                // Smooth movement with easing
+                const dx = this.targetX - this.catX;
+                const dy = this.targetY - this.catY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance > 1) {
+                    // Speed based on distance and intelligence
+                    const speedFactor = 0.1 + (this.intelligence * 0.02);
+                    const speed = Math.min(distance * speedFactor, 15);
+                    this.catX += (dx / distance) * speed;
+                    this.catY += (dy / distance) * speed;
+                    
+                    // Update cat position
+                    this.cat.style.left = this.catX + 'px';
+                    this.cat.style.top = this.catY + 'px';
+                    
+                    // Rotate cat based on movement direction
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    this.cat.style.transform = `rotate(${angle}deg)`;
+                }
+                
+                // Animate eyes to follow cursor
+                this.animateEyes();
+                
+                requestAnimationFrame(() => this.animateCat());
+            }
+            
+            animateEyes() {
+                const catRect = this.cat.getBoundingClientRect();
+                const catCenterX = catRect.left + catRect.width / 2;
+                const catCenterY = catRect.top + catRect.height / 2;
+                
+                // Calculate angle from cat center to mouse
+                const dx = this.mouseX - catCenterX;
+                const dy = this.mouseY - catCenterY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // Limit pupil movement based on intelligence
+                const maxOffset = 3 + (this.intelligence * 0.5);
+                const offsetX = (dx / distance) * Math.min(distance / 20, maxOffset);
+                const offsetY = (dy / distance) * Math.min(distance / 20, maxOffset);
+                
+                // Update pupil positions
+                document.getElementById('pupilLeft').style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+                document.getElementById('pupilRight').style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            }
+            
+            interactWithToy(toy) {
+                // Make cat jump to toy
+                const toyRect = toy.getBoundingClientRect();
+                this.targetX = toyRect.left - 50;
+                this.targetY = toyRect.top - 50;
+                
+                // Update memory
+                this.memory.interactions++;
+                const toyId = toy.style.left + toy.style.top;
+                
+                if (!this.memory.favoriteToys.includes(toyId)) {
+                    this.memory.favoriteToys.push(toyId);
+                }
+                
+                // Add happy state
+                this.cat.classList.add('happy');
+                this.mood = 'playful';
+                this.updateMoodDisplay();
+                
+                setTimeout(() => {
+                    this.cat.classList.remove('happy');
+                    this.mood = 'happy';
+                    this.updateMoodDisplay();
+                }, 2000);
+                
+                // Bounce toy
+                toy.style.animation = 'none';
+                setTimeout(() => {
+                    toy.style.animation = 'bounce 0.5s ease, float 3s ease-in-out infinite';
+                }, 10);
+                
+                // Move toy to random position
+                setTimeout(() => {
+                    toy.style.left = Math.random() * (window.innerWidth - 30) + 'px';
+                    toy.style.top = Math.random() * (window.innerHeight - 30) + 'px';
+                }, 600);
+                
+                // AI response
+                if (Math.random() < this.intelligence / 10) {
+                    this.catTalk();
+                }
+                
+                // Update energy
+                this.energy = Math.max(0, this.energy - 5);
+                this.updateCatStatus();
+            }
+            
+            catTalk() {
+                const responses = this.responses[this.personality];
+                const message = responses[Math.floor(Math.random() * responses.length)];
+                
+                // Position bubble near cat
+                const catRect = this.cat.getBoundingClientRect();
+                this.bubble.style.left = catRect.left + 'px';
+                this.bubble.style.top = (catRect.top - 80) + 'px';
+                this.bubble.textContent = message;
+                this.bubble.classList.add('active');
+                
+                // Hide bubble after a few seconds
+                setTimeout(() => {
+                    this.bubble.classList.remove('active');
+                }, 3000);
+                
+                // Update memory
+                this.memory.interactions++;
+            }
+            
+            makeCatJump() {
+                this.cat.style.animation = 'none';
+                setTimeout(() => {
+                    this.cat.style.animation = 'jump 0.5s ease';
+                }, 10);
+                
+                // Update energy
+                this.energy = Math.max(0, this.energy - 2);
+                this.updateCatStatus();
+            }
+            
+            toggleSleep() {
+                this.cat.classList.toggle('sleeping');
+                if (this.cat.classList.contains('sleeping')) {
+                    this.mood = 'sleepy';
+                } else {
+                    this.mood = 'happy';
+                }
+                this.updateMoodDisplay();
+            }
+            
+            toggleVoiceInteraction() {
+                this.isVoiceActive = !this.isVoiceActive;
+                const voiceBtn = document.getElementById('voiceBtn');
+                const voiceIndicator = document.getElementById('voiceIndicator');
+                
+                if (this.isVoiceActive) {
+                    voiceBtn.classList.add('active');
+                    voiceIndicator.classList.add('active');
+                    this.showNotification('Voice Activated', 'Your cat is now listening to your voice!');
+                    
+                    // Simulate voice recognition
+                    setTimeout(() => {
+                        if (this.isVoiceActive) {
+                            this.processVoiceCommand("play");
+                        }
+                    }, 3000);
+                } else {
+                    voiceBtn.classList.remove('active');
+                    voiceIndicator.classList.remove('active');
+                }
+            }
+            
+            processVoiceCommand(command) {
+                if (!this.isVoiceActive) return;
+                
+                this.memory.voiceCommands.push(command);
+                
+                switch(command.toLowerCase()) {
+                    case "play":
+                        this.mood = 'playful';
+                        this.catTalk();
+                        break;
+                    case "sleep":
+                        this.toggleSleep();
+                        break;
+                    case "come":
+                        this.targetX = window.innerWidth / 2;
+                        this.targetY = window.innerHeight / 2;
+                        break;
+                    case "jump":
+                        this.makeCatJump();
+                        break;
+                    default:
+                        this.catTalk();
+                }
+                
+                this.updateMoodDisplay();
+            }
+            
+            toggleLearning() {
+                this.isLearningEnabled = !this.isLearningEnabled;
+                const learningBtn = document.getElementById('learningBtn');
+                
+                if (this.isLearningEnabled) {
+                    learningBtn.classList.add('active');
+                    this.showNotification('Learning Enabled', 'Your cat will now learn from your interactions!');
+                } else {
+                    learningBtn.classList.remove('active');
+                    this.showNotification('Learning Disabled', 'Your cat will no longer learn new behaviors.');
+                }
+            }
+            
+            togglePrediction() {
+                this.isPredictionEnabled = !this.isPredictionEnabled;
+                const predictionBtn = document.getElementById('predictionBtn');
+                
+                if (this.isPredictionEnabled) {
+                    predictionBtn.classList.add('active');
+                    this.showNotification('Prediction Enabled', 'Your cat will now try to predict your actions!');
+                    this.startPrediction();
+                } else {
+                    predictionBtn.classList.remove('active');
+                    this.showNotification('Prediction Disabled', 'Your cat will no longer predict your actions.');
+                }
+            }
+            
+            startPrediction() {
+                if (!this.isPredictionEnabled) return;
+                
+                // Analyze user patterns
+                if (this.memory.userPatterns.length > 5) {
+                    // Predict next action based on patterns
+                    const prediction = this.predictNextAction();
+                    
+                    if (prediction && Math.random() < 0.3) {
+                        this.showNotification('AI Prediction', `I think you're going to ${prediction} next!`);
+                    }
+                }
+                
+                // Continue prediction
+                setTimeout(() => this.startPrediction(), 10000);
+            }
+            
+            predictNextAction() {
+                // Simple prediction based on recent patterns
+                const recentPatterns = this.memory.userPatterns.slice(-5);
+                const actions = ['move the mouse', 'click a toy', 'press a key', 'use voice command'];
+                
+                // Count occurrences
+                const counts = {};
+                recentPatterns.forEach(pattern => {
+                    counts[pattern] = (counts[pattern] || 0) + 1;
+                });
+                
+                // Find most common
+                let maxCount = 0;
+                let prediction = null;
+                
+                for (const [action, count] of Object.entries(counts)) {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        prediction = action;
+                    }
+                }
+                
+                return prediction || actions[Math.floor(Math.random() * actions.length)];
+            }
+            
+            resetAI() {
+                this.memory = {
+                    interactions: 0,
+                    favoriteToys: [],
+                    userPatterns: [],
+                    learnedBehaviors: [],
+                    voiceCommands: [],
+                    timeSpent: 0
+                };
+                
+                this.learningProgress = 0;
+                this.updateLearningProgress();
+                
+                this.showNotification('AI Reset', 'Your cat has been reset to its initial state!');
+            }
+            
+            updateCatStatus() {
+                // Update energy
+                if (this.isMoving) {
+                    this.energy = Math.max(0, this.energy - 0.1);
+                } else {
+                    this.energy = Math.min(100, this.energy + 0.05);
+                }
+                
+                // Update hunger
+                this.hunger = Math.min(100, this.hunger + 0.02);
+                
+                // Update display
+                document.getElementById('energyStatus').textContent = Math.round(this.energy) + '%';
+                document.getElementById('hungerStatus').textContent = Math.round(this.hunger) + '%';
+                document.getElementById('moodStatus').textContent = this.mood.charAt(0).toUpperCase() + this.mood.slice(1);
+                
+                // Update mood based on status
+                if (this.energy < 20) {
+                    this.mood = 'sleepy';
+                    this.cat.classList.add('sleeping');
+                } else if (this.hunger > 80) {
+                    this.mood = 'hungry';
+                } else if (this.isMoving && this.mouseSpeed > 15) {
+                    this.mood = 'playful';
+                } else {
+                    this.mood = 'happy';
+                }
+                
+                this.updateMoodDisplay();
+            }
+            
+            updateMoodDisplay() {
+                // Update emotion indicators
+                document.querySelectorAll('.emotion').forEach(emotion => {
+                    emotion.classList.remove('active');
+                    if (emotion.dataset.emotion === this.mood) {
+                        emotion.classList.add('active');
+                    }
+                });
+                
+                // Update cat class
+                this.cat.className = 'ai-cat';
+                
+                if (this.mood === 'happy') {
+                    this.cat.classList.add('happy');
+                } else if (this.mood === 'sleepy') {
+                    this.cat.classList.add('sleeping');
+                } else if (this.mood === 'playful') {
+                    this.cat.classList.add('playful');
+                } else if (this.mood === 'curious') {
+                    this.cat.classList.add('curious');
+                }
+            }
+            
+            updateLearningProgress() {
+                if (!this.isLearningEnabled) return;
+                
+                // Calculate learning progress based on interactions
+                const interactionProgress = Math.min(this.memory.interactions * 2, 50);
+                const timeProgress = Math.min(this.memory.timeSpent / 60, 30);
+                const behaviorProgress = Math.min(this.memory.learnedBehaviors.length * 10, 20);
+                
+                this.learningProgress = interactionProgress + timeProgress + behaviorProgress;
+                
+                // Update display
+                document.getElementById('learningProgress').style.width = this.learningProgress + '%';
+                document.getElementById('learningLabel').textContent = Math.round(this.learningProgress) + '% Complete';
+                
+                // Check for learning milestones
+                if (this.learningProgress >= 25 && !this.memory.learnedBehaviors.includes('basic')) {
+                    this.memory.learnedBehaviors.push('basic');
+                    this.showNotification('Learning Milestone', 'Your cat has learned basic behaviors!');
+                } else if (this.learningProgress >= 50 && !this.memory.learnedBehaviors.includes('intermediate')) {
+                    this.memory.learnedBehaviors.push('intermediate');
+                    this.showNotification('Learning Milestone', 'Your cat has learned intermediate behaviors!');
+                } else if (this.learningProgress >= 75 && !this.memory.learnedBehaviors.includes('advanced')) {
+                    this.memory.learnedBehaviors.push('advanced');
+                    this.showNotification('Learning Milestone', 'Your cat has learned advanced behaviors!');
+                } else if (this.learningProgress >= 100 && !this.memory.learnedBehaviors.includes('expert')) {
+                    this.memory.learnedBehaviors.push('expert');
+                    this.showNotification('Learning Milestone', 'Your cat has become an expert companion!');
+                }
+            }
+            
+            startAIProcessing() {
+                // AI thinking and learning process
+                setInterval(() => {
+                    if (!this.isLearningEnabled) return;
+                    
+                    // Analyze user patterns
+                    if (this.isMoving) {
+                        this.memory.userPatterns.push('move the mouse');
+                    }
+                    
+                    // Limit pattern history
+                    if (this.memory.userPatterns.length > 20) {
+                        this.memory.userPatterns.shift();
+                    }
+                    
+                    // Learn from interactions
+                    if (this.memory.interactions > 0 && this.memory.interactions % 10 === 0) {
+                        this.adaptBehavior();
+                    }
+                }, 2000);
+            }
+            
+            adaptBehavior() {
+                // Adapt behavior based on learned patterns
+                if (this.memory.favoriteToys.length > 0) {
+                    // Cat has favorite toys, become more playful
+                    if (this.personality !== 'playful' && Math.random() < 0.3) {
+                        this.personality = 'playful';
+                        document.querySelectorAll('.personality-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                            if (btn.dataset.personality === 'playful') {
+                                btn.classList.add('active');
+                            }
+                        });
+                        this.showNotification('Personality Adapted', 'Your cat has become more playful based on your interactions!');
+                    }
+                }
+                
+                if (this.memory.voiceCommands.length > 5) {
+                    // Cat is used to voice commands, become more responsive
+                    this.intelligence = Math.min(10, this.intelligence + 1);
+                    document.getElementById('intelligence').value = this.intelligence;
+                    document.getElementById('intelligenceValue').textContent = this.intelligence;
+                }
+            }
+            
+            aiThink() {
+                // Random AI thoughts and actions
+                if (Math.random() < 0.1 * (this.intelligence / 10)) {
+                    this.catTalk();
+                }
+                
+                if (Math.random() < 0.05 && this.energy > 50) {
+                    this.makeCatJump();
+                }
+                
+                if (Math.random() < 0.03 && this.mood === 'curious') {
+                    this.cat.classList.add('curious');
+                    setTimeout(() => {
+                        this.cat.classList.remove('curious');
+                    }, 2000);
+                }
+            }
+            
+            showNotification(title, message) {
+                const notification = document.getElementById('notification');
+                document.getElementById('notificationTitle').textContent = title;
+                document.getElementById('notificationMessage').textContent = message;
+                notification.classList.add('active');
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    notification.classList.remove('active');
+                }, 5000);
+            }
+        }
+        
+        // Add jump animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes jump {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-50px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize AI Cat System
+        const aiCat = new AICatSystem();
+        
+        // Create additional toys dynamically
+        function createRandomToy() {
+            const toy = document.createElement('div');
+            toy.className = 'toy';
+            toy.style.left = Math.random() * (window.innerWidth - 30) + 'px';
+            toy.style.top = Math.random() * (window.innerHeight - 30) + 'px';
+            document.body.appendChild(toy);
+            
+            toy.addEventListener('click', () => {
+                aiCat.interactWithToy(toy);
+            });
+        }
+        
+        // Create additional toys after a delay
+        setTimeout(() => {
+            createRandomToy();
+        }, 2000);
+        
+        setTimeout(() => {
+            createRandomToy();
+        }, 5000);
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            // Keep cat within bounds
+            aiCat.catX = Math.min(aiCat.catX, window.innerWidth - 100);
+            aiCat.catY = Math.min(aiCat.catY, window.innerHeight - 100);
+        });
+    </script>
+</body>
+</html>
