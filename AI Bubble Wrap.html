@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Digital Bubble Wrap - Next Generation Stress Relief</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .live-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff4757;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            position: relative;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 210, 255, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(0, 210, 255, 0.8); }
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            color: white;
+            min-width: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .bubble-type-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.3rem;
+            border-radius: 25px;
+        }
+
+        .type-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .type-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .ai-message {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            text-align: center;
+            font-style: italic;
+            color: #333;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-message::before {
+            content: '🤖 AI says:';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.8rem;
+            color: #667eea;
+            font-style: normal;
+        }
+
+        .bubble-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .bubble-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 10px;
+            padding: 1rem;
+        }
+
+        .bubble {
+            aspect-ratio: 1;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0);
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 
+                inset -2px -2px 5px rgba(0, 0, 0, 0.2),
+                inset 2px 2px 5px rgba(255, 255, 255, 0.7),
+                2px 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .bubble::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 30%;
+            height: 30%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent);
+            border-radius: 50%;
+        }
+
+        .bubble:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                inset -2px -2px 8px rgba(0, 0, 0, 0.3),
+                inset 2px 2px 8px rgba(255, 255, 255, 0.9),
+                3px 3px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .bubble.popping {
+            animation: pop 0.3s ease-out forwards;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        .bubble.popped {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Hexagonal bubbles */
+        .hex .bubble {
+            border-radius: 20%;
+            transform: rotate(45deg);
+        }
+
+        .hex .bubble::before {
+            transform: rotate(-45deg);
+        }
+
+        /* Square bubbles */
+        .square .bubble {
+            border-radius: 15%;
+        }
+
+        /* Crystal bubbles */
+        .crystal .bubble {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9), 
+                rgba(200, 200, 255, 0.6),
+                rgba(255, 255, 255, 0.9));
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+        }
+
+        /* Galaxy bubbles */
+        .galaxy .bubble {
+            background: radial-gradient(circle at 30% 30%, 
+                hsl(var(--hue), 100%, 70%), 
+                hsl(calc(var(--hue) + 60), 100%, 50%),
+                hsl(calc(var(--hue) + 120), 100%, 30%));
+            box-shadow: 
+                0 0 20px hsl(var(--hue), 100%, 50%),
+                inset -2px -2px 5px rgba(0, 0, 0, 0.3),
+                inset 2px 2px 5px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Special bubbles */
+        .bubble.special {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            animation: specialPulse 2s infinite;
+        }
+
+        @keyframes specialPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .bubble.bonus {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            position: relative;
+        }
+
+        .bubble.bonus::after {
+            content: '⭐';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+        }
+
+        .pop-effect {
+            position: absolute;
+            pointer-events: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent);
+            animation: popEffect 0.5s ease-out forwards;
+        }
+
+        @keyframes popEffect {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
+        }
+
+        .floating-text {
+            position: absolute;
+            pointer-events: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 1000;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .combo-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 1000;
+        }
+
+        .combo-indicator.show {
+            animation: comboShow 1s ease-out forwards;
+        }
+
+        @keyframes comboShow {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .real-time-stats {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .real-time-stat {
+            text-align: center;
+        }
+
+        .real-time-stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .real-time-stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .api-key-input {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .api-key-input.show {
+            display: block;
+        }
+
+        .api-key-input input {
+            padding: 0.5rem;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            margin-right: 0.5rem;
+        }
+
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                justify-content: center;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .bubble-grid {
+                grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+                gap: 8px;
+            }
+            
+            .stats {
+                gap: 1rem;
+            }
+            
+            .stat-item {
+                min-width: 80px;
+                padding: 0.3rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="live-indicator">
+        <div class="live-dot"></div>
+        <span>LIVE</span>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <h1>
+                <span class="emoji-icon">🫧</span>
+                AI Bubble Wrap
+                <span class="ai-badge">AI POWERED</span>
+            </h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Popped</span>
+                    <span class="stat-value" id="popCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Combo</span>
+                    <span class="stat-value" id="comboCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Score</span>
+                    <span class="stat-value" id="scoreCount">0</span>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="bubble-type-selector">
+                    <button class="type-btn active" data-type="classic">Classic</button>
+                    <button class="type-btn" data-type="hex">Hexagon</button>
+                    <button class="type-btn" data-type="square">Square</button>
+                    <button class="type-btn" data-type="crystal">Crystal</button>
+                    <button class="type-btn" data-type="galaxy">Galaxy</button>
+                </div>
+                <button class="btn-primary" id="resetBtn">New Sheet</button>
+                <button class="btn-secondary" id="aiBtn">AI Mode</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="ai-message" id="aiMessage">
+            Welcome to AI-Powered Bubble Wrap! Start popping for personalized motivation!
+        </div>
+        
+        <div class="bubble-container">
+            <div class="bubble-grid" id="bubbleGrid"></div>
+            
+            <div class="real-time-stats">
+                <div class="real-time-stat">
+                    <div class="real-time-stat-value" id="popsPerMinute">0</div>
+                    <div class="real-time-stat-label">Pops/Min</div>
+                </div>
+                <div class="real-time-stat">
+                    <div class="real-time-stat-value" id="accuracy">100%</div>
+                    <div class="real-time-stat-label">Accuracy</div>
+                </div>
+                <div class="real-time-stat">
+                    <div class="real-time-stat-value" id="timeElapsed">0:00</div>
+                    <div class="real-time-stat-label">Time</div>
+                </div>
+                <div class="real-time-stat">
+                    <div class="real-time-stat-value" id="globalPoppers">0</div>
+                    <div class="real-time-stat-label">Global Poppers</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="combo-indicator" id="comboIndicator"></div>
+
+    <div class="api-key-input" id="apiKeyInput">
+        <input type="password" id="apiKey" placeholder="Enter OpenAI API Key">
+        <button id="saveApiKey">Save</button>
+    </div>
+
+    <footer>
+        <p>© 2024 AI-Powered Digital Bubble Wrap | Next Generation Stress Relief | Powered by OpenAI</p>
+    </footer>
+
+    <script>
+        class AIBubbleWrapGame {
+            constructor() {
+                this.bubbles = [];
+                this.popCount = 0;
+                this.comboCount = 0;
+                this.score = 0;
+                this.lastPopTime = 0;
+                this.startTime = Date.now();
+                this.currentType = 'classic';
+                this.aiMode = false;
+                this.apiKey = localStorage.getItem('openaiApiKey') || '';
+                this.popsInLastMinute = [];
+                this.totalClicks = 0;
+                this.audioContext = null;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupAudio();
+                this.createBubbles();
+                this.attachEventListeners();
+                this.updateStats();
+                this.startRealTimeUpdates();
+                this.simulateGlobalPoppers();
+            }
+
+            setupAudio() {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            playPopSound(pitch = 1, type = 'normal') {
+                if (!this.audioContext) return;
+
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                if (type === 'special') {
+                    oscillator.frequency.value = 400 * pitch;
+                    oscillator.type = 'square';
+                } else if (type === 'bonus') {
+                    oscillator.frequency.value = 600 * pitch;
+                    oscillator.type = 'triangle';
+                } else {
+                    oscillator.frequency.value = 200 * pitch;
+                    oscillator.type = 'sine';
+                }
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.1);
+            }
+
+            createBubbles() {
+                const grid = document.getElementById('bubbleGrid');
+                grid.innerHTML = '';
+                grid.className = 'bubble-grid';
+                
+                if (this.currentType !== 'classic') {
+                    grid.classList.add(this.currentType);
+                }
+                
+                this.bubbles = [];
+                
+                const bubbleCount = window.innerWidth < 768 ? 60 : 96;
+                
+                for (let i = 0; i < bubbleCount; i++) {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'bubble';
+                    bubble.dataset.index = i;
+                    
+                    // Add special bubbles randomly
+                    if (Math.random() < 0.05) {
+                        bubble.classList.add('special');
+                    } else if (Math.random() < 0.03) {
+                        bubble.classList.add('bonus');
+                    }
+                    
+                    if (this.currentType === 'galaxy') {
+                        bubble.style.setProperty('--hue', `${Math.random() * 360}`);
+                    }
+                    
+                    bubble.addEventListener('click', (e) => this.popBubble(e, bubble));
+                    bubble.addEventListener('mouseenter', () => this.hoverBubble(bubble));
+                    
+                    grid.appendChild(bubble);
+                    this.bubbles.push(bubble);
+                }
+            }
+
+            popBubble(event, bubble) {
+                if (bubble.classList.contains('popped') || bubble.classList.contains('popping')) return;
+                
+                this.totalClicks++;
+                bubble.classList.add('popping');
+                
+                // Calculate combo
+                const currentTime = Date.now();
+                if (currentTime - this.lastPopTime < 1000) {
+                    this.comboCount++;
+                } else {
+                    this.comboCount = 1;
+                }
+                this.lastPopTime = currentTime;
+                
+                // Calculate score
+                let points = 10;
+                if (bubble.classList.contains('special')) {
+                    points = 50;
+                    this.createFloatingText(event, 'SPECIAL! +50');
+                } else if (bubble.classList.contains('bonus')) {
+                    points = 100;
+                    this.createFloatingText(event, 'BONUS! +100');
+                } else if (this.comboCount > 5) {
+                    points = 10 * (1 + Math.floor(this.comboCount / 5));
+                    this.createFloatingText(event, `COMBO x${Math.floor(this.comboCount / 5) + 1}!`);
+                }
+                
+                this.score += points;
+                this.popCount++;
+                this.popsInLastMinute.push(currentTime);
+                
+                // Clean old pops from last minute
+                this.popsInLastMinute = this.popsInLastMinute.filter(time => currentTime - time < 60000);
+                
+                this.updateStats();
+                
+                // Play sound
+                const pitch = 0.8 + (Math.random() * 0.4);
+                let soundType = 'normal';
+                if (bubble.classList.contains('special')) soundType = 'special';
+                else if (bubble.classList.contains('bonus')) soundType = 'bonus';
+                
+                this.playPopSound(pitch, soundType);
+                
+                // Create visual effects
+                this.createPopEffect(event);
+                
+                // AI message
+                if (this.aiMode && this.popCount % 10 === 0) {
+                    this.getAIMessage();
+                }
+                
+                // Mark as popped after animation
+                setTimeout(() => {
+                    bubble.classList.add('popped');
+                    bubble.classList.remove('popping');
+                    
+                    // Check if all bubbles are popped
+                    if (this.bubbles.every(b => b.classList.contains('popped'))) {
+                        this.allPopped();
+                    }
+                }, 300);
+            }
+
+            hoverBubble(bubble) {
+                if (bubble.classList.contains('popped')) return;
+                
+                // Subtle hover sound
+                if (Math.random() > 0.7) {
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.05, this.audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+                    
+                    oscillator.start(this.audioContext.currentTime);
+                    oscillator.stop(this.audioContext.currentTime + 0.05);
+                }
+            }
+
+            createPopEffect(event) {
+                const effect = document.createElement('div');
+                effect.className = 'pop-effect';
+                effect.style.left = event.clientX + 'px';
+                effect.style.top = event.clientY + 'px';
+                document.body.appendChild(effect);
+                
+                setTimeout(() => effect.remove(), 500);
+            }
+
+            createFloatingText(event, text) {
+                const floatingText = document.createElement('div');
+                floatingText.className = 'floating-text';
+                floatingText.textContent = text;
+                floatingText.style.left = event.clientX + 'px';
+                floatingText.style.top = event.clientY + 'px';
+                floatingText.style.color = this.currentType === 'galaxy' ? 
+                    `hsl(${Math.random() * 360}, 100%, 60%)` : '#667eea';
+                
+                document.body.appendChild(floatingText);
+                setTimeout(() => floatingText.remove(), 1000);
+            }
+
+            allPopped() {
+                setTimeout(() => {
+                    const celebration = document.createElement('div');
+                    celebration.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 4rem;
+                        font-weight: bold;
+                        color: white;
+                        text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+                        z-index: 1000;
+                        animation: comboShow 2s ease-out forwards;
+                    `;
+                    celebration.textContent = '🎉 PERFECT! 🎉';
+                    document.body.appendChild(celebration);
+                    
+                    // Play celebration sound
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            this.playPopSound(1 + i * 0.2);
+                        }, i * 100);
+                    }
+                    
+                    setTimeout(() => celebration.remove(), 2000);
+                    
+                    // Auto reset after celebration
+                    setTimeout(() => this.reset(), 2500);
+                }, 500);
+            }
+
+            async getAIMessage() {
+                if (!this.apiKey) return;
+                
+                const messages = [
+                    `I've noticed you've popped ${this.popCount} bubbles! That's great stress relief!`,
+                    `Your combo of ${this.comboCount} shows amazing focus! Keep it up!`,
+                    `You're doing great! Popping bubbles can reduce cortisol levels.`,
+                    `Amazing rhythm! Your current score is ${this.score} points!`,
+                    `You're a bubble-popping champion! ${this.popsInLastMinute.length} pops in the last minute!`
+                ];
+                
+                // Fallback to local messages if API key is not set
+                if (!this.apiKey) {
+                    const message = messages[Math.floor(Math.random() * messages.length)];
+                    document.getElementById('aiMessage').textContent = message;
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-3.5-turbo',
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: 'You are a motivational assistant for a bubble popping game. Keep responses short, encouraging, and related to bubble popping or stress relief.'
+                                },
+                                {
+                                    role: 'user',
+                                    content: `The user has popped ${this.popCount} bubbles, has a combo of ${this.comboCount}, and scored ${this.score} points. Give them a short motivational message!`
+                                }
+                            ],
+                            max_tokens: 50,
+                            temperature: 0.7
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.choices && data.choices[0]) {
+                        document.getElementById('aiMessage').textContent = data.choices[0].message.content;
+                    }
+                } catch (error) {
+                    console.error('AI Message Error:', error);
+                    // Fallback to local messages
+                    const message = messages[Math.floor(Math.random() * messages.length)];
+                    document.getElementById('aiMessage').textContent = message;
+                }
+            }
+
+            reset() {
+                this.popCount = 0;
+                this.comboCount = 0;
+                this.score = 0;
+                this.startTime = Date.now();
+                this.popsInLastMinute = [];
+                this.totalClicks = 0;
+                this.updateStats();
+                this.createBubbles();
+            }
+
+            changeBubbleType(type) {
+                this.currentType = type;
+                this.createBubbles();
+            }
+
+            toggleAIMode() {
+                this.aiMode = !this.aiMode;
+                const aiBtn = document.getElementById('aiBtn');
+                aiBtn.textContent = this.aiMode ? 'AI Mode ON' : 'AI Mode';
+                
+                if (this.aiMode && !this.apiKey) {
+                    document.getElementById('apiKeyInput').classList.add('show');
+                }
+                
+                if (this.aiMode) {
+                    this.getAIMessage();
+                }
+            }
+
+            saveApiKey() {
+                const apiKey = document.getElementById('apiKey').value;
+                if (apiKey) {
+                    this.apiKey = apiKey;
+                    localStorage.setItem('openaiApiKey', apiKey);
+                    document.getElementById('apiKeyInput').classList.remove('show');
+                    this.getAIMessage();
+                }
+            }
+
+            startRealTimeUpdates() {
+                setInterval(() => {
+                    // Update pops per minute
+                    document.getElementById('popsPerMinute').textContent = this.popsInLastMinute.length;
+                    
+                    // Update accuracy
+                    const accuracy = this.totalClicks > 0 ? 
+                        Math.round((this.popCount / this.totalClicks) * 100) : 100;
+                    document.getElementById('accuracy').textContent = `${accuracy}%`;
+                    
+                    // Update time elapsed
+                    const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    document.getElementById('timeElapsed').textContent = 
+                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+
+            simulateGlobalPoppers() {
+                setInterval(() => {
+                    const globalCount = 1000 + Math.floor(Math.random() * 500);
+                    document.getElementById('globalPoppers').textContent = globalCount;
+                }, 5000);
+            }
+
+            updateStats() {
+                document.getElementById('popCount').textContent = this.popCount;
+                document.getElementById('comboCount').textContent = this.comboCount;
+                document.getElementById('scoreCount').textContent = this.score;
+            }
+
+            attachEventListeners() {
+                // Reset button
+                document.getElementById('resetBtn').addEventListener('click', () => this.reset());
+                
+                // AI mode button
+                document.getElementById('aiBtn').addEventListener('click', () => this.toggleAIMode());
+                
+                // Save API key
+                document.getElementById('saveApiKey').addEventListener('click', () => this.saveApiKey());
+                
+                // Bubble type selector
+                document.querySelectorAll('.type-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.changeBubbleType(e.target.dataset.type);
+                    });
+                });
+                
+                // Keyboard controls
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        this.burstPop();
+                    } else if (e.code === 'KeyR') {
+                        this.reset();
+                    } else if (e.code === 'KeyA') {
+                        document.getElementById('aiBtn').click();
+                    }
+                });
+                
+                // Touch support for mobile
+                document.addEventListener('touchstart', (e) => {
+                    if (e.target.classList.contains('bubble')) {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const event = {
+                            clientX: touch.clientX,
+                            clientY: touch.clientY
+                        };
+                        this.popBubble(event, e.target);
+                    }
+                });
+            }
+
+            burstPop() {
+                const unpopped = this.bubbles.filter(b => !b.classList.contains('popped'));
+                const count = Math.min(10, unpopped.length);
+                
+                for (let i = 0; i < count; i++) {
+                    const randomBubble = unpopped[Math.floor(Math.random() * unpopped.length)];
+                    if (randomBubble && !randomBubble.classList.contains('popping')) {
+                        setTimeout(() => {
+                            const rect = randomBubble.getBoundingClientRect();
+                            const event = {
+                                clientX: rect.left + rect.width / 2,
+                                clientY: rect.top + rect.height / 2
+                            };
+                            this.popBubble(event, randomBubble);
+                        }, i * 50);
+                    }
+                }
+            }
+        }
+
+        // Initialize the game when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const game = new AIBubbleWrapGame();
+        });
+    </script>
+</body>
+</html>
