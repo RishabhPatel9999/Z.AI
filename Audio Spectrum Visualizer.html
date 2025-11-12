@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Audio Visualizer Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: blink 2s infinite;
+        }
+
+        .status-indicator.disconnected {
+            background: #ef4444;
+            animation: none;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .visualizer-container {
+            flex: 1;
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .ai-insights {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 300px;
+            transform: translateX(350px);
+            transition: transform 0.3s ease;
+        }
+
+        .ai-insights.visible {
+            transform: translateX(0);
+        }
+
+        .ai-insights h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .insight-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .insight-label {
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 5px;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ai-button {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        .ai-button:hover::before {
+            animation: shine 0.5s ease;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            display: inline-block;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+
+        .slider-container {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .progress-container {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        select {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-btn.active {
+            border-color: white;
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .theme-gradient { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .theme-sunset { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .theme-ocean { background: linear-gradient(135deg, #30cfd0, #330867); }
+        .theme-forest { background: linear-gradient(135deg, #00b09b, #96c93d); }
+        .theme-fire { background: linear-gradient(135deg, #ff0844, #ffb199); }
+
+        .upgrade-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .upgrade-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .upgrade-icon {
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .floating-menu {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .floating-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+
+        .floating-btn.ai {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading .loading-spinner {
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .control-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .slider-container {
+                width: 100%;
+            }
+
+            .ai-insights {
+                max-width: 250px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                🎵 Audio Spectrum Visualizer
+                <span class="ai-badge">AI Enhanced</span>
+            </h1>
+            <p class="subtitle">Next-generation audio visualization with real-time AI analysis</p>
+        </header>
+
+        <div class="status-bar">
+            <div class="connection-status">
+                <div class="status-indicator" id="connectionIndicator"></div>
+                <span id="connectionStatus">Connected to AI Services</span>
+            </div>
+            <div>
+                <span id="version">v2.0.1</span> | 
+                <span id="lastUpdate">Last update: Just now</span>
+            </div>
+        </div>
+
+        <div class="visualizer-container">
+            <canvas id="visualizer"></canvas>
+            <div class="ai-insights" id="aiInsights">
+                <h3>🤖 AI Insights</h3>
+                <div class="insight-item">
+                    <div class="insight-label">Mood Detection</div>
+                    <div id="moodAnalysis">Analyzing...</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Genre Prediction</div>
+                    <div id="genrePrediction">Analyzing...</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Energy Level</div>
+                    <div id="energyLevel">Analyzing...</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Recommended Theme</div>
+                    <div id="recommendedTheme">Analyzing...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept="audio/*">
+                    <label for="fileInput" class="file-input-label">📁 Choose Audio File</label>
+                </div>
+                <button id="micBtn">🎤 Use Microphone</button>
+                <button id="playBtn" disabled>▶️ Play</button>
+                <button id="pauseBtn" disabled>⏸️ Pause</button>
+                <button id="stopBtn" disabled>⏹️ Stop</button>
+                <button id="aiAnalyzeBtn" class="ai-button">
+                    🤖 AI Analyze
+                    <span class="loading-spinner"></span>
+                </button>
+            </div>
+
+            <div class="control-row">
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Volume</span>
+                        <span id="volumeValue">70%</span>
+                    </div>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                </div>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Bar Count</span>
+                        <span id="barCountValue">64</span>
+                    </div>
+                    <input type="range" id="barCountSlider" min="16" max="256" value="64" step="16">
+                </div>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Smoothing</span>
+                        <span id="smoothingValue">0.8</span>
+                    </div>
+                    <input type="range" id="smoothingSlider" min="0" max="95" value="80">
+                </div>
+            </div>
+
+            <div class="control-row">
+                <select id="visualMode">
+                    <option value="bars">Classic Bars</option>
+                    <option value="wave">Wave Form</option>
+                    <option value="circular">Circular</option>
+                    <option value="mirror">Mirror Bars</option>
+                    <option value="particles">Particles</option>
+                    <option value="neural">Neural Network</option>
+                    <option value="dna">DNA Helix</option>
+                </select>
+                <select id="colorMode">
+                    <option value="gradient">Gradient</option>
+                    <option value="rainbow">Rainbow</option>
+                    <option value="monochrome">Monochrome</option>
+                    <option value="neon">Neon</option>
+                    <option value="ai-dynamic">AI Dynamic</option>
+                </select>
+                <div class="theme-buttons">
+                    <div class="theme-btn theme-gradient active" data-theme="gradient"></div>
+                    <div class="theme-btn theme-sunset" data-theme="sunset"></div>
+                    <div class="theme-btn theme-ocean" data-theme="ocean"></div>
+                    <div class="theme-btn theme-forest" data-theme="forest"></div>
+                    <div class="theme-btn theme-fire" data-theme="fire"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-menu">
+        <button class="floating-btn ai" id="aiToggle" title="Toggle AI Insights">🤖</button>
+        <button class="floating-btn" id="settingsToggle" title="Settings">⚙️</button>
+    </div>
+
+    <div class="upgrade-notification" id="upgradeNotification">
+        <div class="upgrade-icon">🚀</div>
+        <div>
+            <strong>New Features Available!</strong>
+            <div style="font-size: 0.9rem; opacity: 0.9;">Click to update to latest version</div>
+        </div>
+        <button onclick="performUpgrade()" style="margin-left: 20px;">Update Now</button>
+    </div>
+
+    <script>
+        class AIEnhancedAudioVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('visualizer');
+                this.ctx = this.canvas.getContext('2d');
+                this.audioContext = null;
+                this.analyser = null;
+                this.source = null;
+                this.audio = null;
+                this.dataArray = null;
+                this.animationId = null;
+                this.isPlaying = false;
+                this.isMicrophone = false;
+                this.particles = [];
+                this.neuralNodes = [];
+                this.dnaPoints = [];
+                
+                // AI and real-time features
+                this.ws = null;
+                this.aiAnalysisInterval = null;
+                this.currentVersion = '2.0.1';
+                this.updateAvailable = false;
+                
+                this.settings = {
+                    barCount: 64,
+                    smoothing: 0.8,
+                    volume: 0.7,
+                    visualMode: 'bars',
+                    colorMode: 'gradient',
+                    theme: 'gradient',
+                    aiEnabled: true
+                };
+
+                this.themes = {
+                    gradient: ['#667eea', '#764ba2'],
+                    sunset: ['#fa709a', '#fee140'],
+                    ocean: ['#30cfd0', '#330867'],
+                    forest: ['#00b09b', '#96c93d'],
+                    fire: ['#ff0844', '#ffb199']
+                };
+
+                this.aiData = {
+                    mood: 'neutral',
+                    genre: 'unknown',
+                    energy: 0,
+                    tempo: 0,
+                    key: 'C',
+                    recommendedTheme: 'gradient'
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.setupCanvas();
+                this.setupEventListeners();
+                this.initParticles();
+                this.initNeuralNetwork();
+                this.initDNAHelix();
+                this.connectWebSocket();
+                this.checkForUpdates();
+                window.addEventListener('resize', () => this.setupCanvas());
+            }
+
+            setupCanvas() {
+                const container = this.canvas.parentElement;
+                this.canvas.width = container.clientWidth;
+                this.canvas.height = container.clientHeight;
+            }
+
+            connectWebSocket() {
+                // Simulate WebSocket connection for real-time updates
+                this.ws = {
+                    readyState: 1,
+                    send: (data) => {
+                        console.log('WebSocket:', data);
+                        // Simulate response
+                        setTimeout(() => {
+                            this.handleWebSocketMessage({
+                                type: 'ai-update',
+                                data: this.generateAIInsights()
+                            });
+                        }, 500);
+                    }
+                };
+
+                // Simulate real-time updates
+                setInterval(() => {
+                    if (this.isPlaying && this.aiEnabled) {
+                        this.performAIAnalysis();
+                    }
+                }, 3000);
+            }
+
+            handleWebSocketMessage(message) {
+                switch(message.type) {
+                    case 'ai-update':
+                        this.updateAIInsights(message.data);
+                        break;
+                    case 'version-update':
+                        this.showUpdateNotification(message.data);
+                        break;
+                    case 'new-feature':
+                        this.addNewFeature(message.data);
+                        break;
+                }
+            }
+
+            generateAIInsights() {
+                const moods = ['Energetic', 'Calm', 'Melancholic', 'Happy', 'Intense', 'Dreamy'];
+                const genres = ['Electronic', 'Rock', 'Jazz', 'Classical', 'Hip-Hop', 'Ambient'];
+                const themes = Object.keys(this.themes);
+                
+                return {
+                    mood: moods[Math.floor(Math.random() * moods.length)],
+                    genre: genres[Math.floor(Math.random() * genres.length)],
+                    energy: Math.floor(Math.random() * 100),
+                    tempo: Math.floor(Math.random() * 60) + 60,
+                    recommendedTheme: themes[Math.floor(Math.random() * themes.length)]
+                };
+            }
+
+            performAIAnalysis() {
+                if (!this.dataArray) return;
+                
+                // Simulate AI analysis
+                const avgValue = this.dataArray.reduce((a, b) => a + b, 0) / this.dataArray.length;
+                const peakValue = Math.max(...this.dataArray);
+                
+                this.aiData.energy = Math.floor((avgValue / 255) * 100);
+                
+                // Simulate mood detection based on frequency distribution
+                const bassEnergy = this.dataArray.slice(0, 10).reduce((a, b) => a + b, 0) / 10;
+                const midEnergy = this.dataArray.slice(10, 50).reduce((a, b) => a + b, 0) / 40;
+                const trebleEnergy = this.dataArray.slice(50).reduce((a, b) => a + b, 0) / (this.dataArray.length - 50);
+                
+                if (bassEnergy > 150) {
+                    this.aiData.mood = 'Intense';
+                } else if (midEnergy > 100) {
+                    this.aiData.mood = 'Melodic';
+                } else if (trebleEnergy > 100) {
+                    this.aiData.mood = 'Bright';
+                } else {
+                    this.aiData.mood = 'Calm';
+                }
+                
+                this.updateAIInsights(this.aiData);
+            }
+
+            updateAIInsights(data) {
+                document.getElementById('moodAnalysis').textContent = data.mood || 'Analyzing...';
+                document.getElementById('genrePrediction').textContent = data.genre || 'Analyzing...';
+                document.getElementById('energyLevel').textContent = `${data.energy || 0}%`;
+                document.getElementById('recommendedTheme').textContent = data.recommendedTheme || 'Analyzing...';
+                
+                // Auto-apply recommended theme
+                if (data.recommendedTheme && this.settings.aiEnabled) {
+                    const themeBtn = document.querySelector(`[data-theme="${data.recommendedTheme}"]`);
+                    if (themeBtn) {
+                        themeBtn.click();
+                    }
+                }
+            }
+
+            checkForUpdates() {
+                // Simulate update check
+                setTimeout(() => {
+                    this.updateAvailable = true;
+                    this.showUpdateNotification({
+                        version: '2.1.0',
+                        features: ['New Neural Network visualization', 'Enhanced AI analysis', 'Performance improvements']
+                    });
+                }, 10000);
+            }
+
+            showUpdateNotification(updateData) {
+                const notification = document.getElementById('upgradeNotification');
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+            }
+
+            initAudioContext() {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    this.analyser = this.audioContext.createAnalyser();
+                    this.analyser.fftSize = 2048;
+                    this.analyser.smoothingTimeConstant = this.settings.smoothing;
+                    this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+                }
+            }
+
+            setupEventListeners() {
+                // File input
+                document.getElementById('fileInput').addEventListener('change', (e) => this.loadFile(e));
+                
+                // Microphone
+                document.getElementById('micBtn').addEventListener('click', () => this.toggleMicrophone());
+                
+                // Playback controls
+                document.getElementById('playBtn').addEventListener('click', () => this.play());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.pause());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+                
+                // AI Analysis
+                document.getElementById('aiAnalyzeBtn').addEventListener('click', () => {
+                    const btn = document.getElementById('aiAnalyzeBtn');
+                    btn.classList.add('loading');
+                    setTimeout(() => {
+                        this.performAIAnalysis();
+                        btn.classList.remove('loading');
+                        document.getElementById('aiInsights').classList.add('visible');
+                    }, 1500);
+                });
+                
+                // AI Toggle
+                document.getElementById('aiToggle').addEventListener('click', () => {
+                    document.getElementById('aiInsights').classList.toggle('visible');
+                });
+                
+                // Sliders
+                document.getElementById('volumeSlider').addEventListener('input', (e) => {
+                    this.settings.volume = e.target.value / 100;
+                    document.getElementById('volumeValue').textContent = `${e.target.value}%`;
+                    if (this.audio) this.audio.volume = this.settings.volume;
+                });
+                
+                document.getElementById('barCountSlider').addEventListener('input', (e) => {
+                    this.settings.barCount = parseInt(e.target.value);
+                    document.getElementById('barCountValue').textContent = e.target.value;
+                });
+                
+                document.getElementById('smoothingSlider').addEventListener('input', (e) => {
+                    this.settings.smoothing = e.target.value / 100;
+                    document.getElementById('smoothingValue').textContent = (e.target.value / 100).toFixed(2);
+                    if (this.analyser) this.analyser.smoothingTimeConstant = this.settings.smoothing;
+                });
+                
+                // Visual modes
+                document.getElementById('visualMode').addEventListener('change', (e) => {
+                    this.settings.visualMode = e.target.value;
+                });
+                
+                document.getElementById('colorMode').addEventListener('change', (e) => {
+                    this.settings.colorMode = e.target.value;
+                });
+                
+                // Theme buttons
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.settings.theme = e.target.dataset.theme;
+                        this.updateBackground();
+                    });
+                });
+                
+                // Progress bar
+                document.getElementById('progressBar').addEventListener('click', (e) => {
+                    if (this.audio && this.audio.duration) {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const percent = (e.clientX - rect.left) / rect.width;
+                        this.audio.currentTime = percent * this.audio.duration;
+                    }
+                });
+            }
+
+            updateBackground() {
+                const colors = this.themes[this.settings.theme];
+                document.body.style.background = `linear-gradient(135deg, ${colors[0]} 0%, ${colors[1]} 100%)`;
+            }
+
+            async loadFile(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                this.initAudioContext();
+                this.stop();
+                
+                const url = URL.createObjectURL(file);
+                this.audio = new Audio(url);
+                this.audio.volume = this.settings.volume;
+                
+                if (this.source) {
+                    this.source.disconnect();
+                }
+                
+                this.source = this.audioContext.createMediaElementSource(this.audio);
+                this.source.connect(this.analyser);
+                this.analyser.connect(this.audioContext.destination);
+                
+                this.audio.addEventListener('loadedmetadata', () => {
+                    document.getElementById('duration').textContent = this.formatTime(this.audio.duration);
+                    this.enableControls();
+                });
+                
+                this.audio.addEventListener('timeupdate', () => {
+                    const percent = (this.audio.currentTime / this.audio.duration) * 100;
+                    document.getElementById('progressFill').style.width = `${percent}%`;
+                    document.getElementById('currentTime').textContent = this.formatTime(this.audio.currentTime);
+                });
+                
+                this.audio.addEventListener('ended', () => {
+                    this.stop();
+                });
+                
+                this.isMicrophone = false;
+                document.getElementById('micBtn').textContent = '🎤 Use Microphone';
+            }
+
+            async toggleMicrophone() {
+                if (this.isMicrophone) {
+                    this.stop();
+                    this.isMicrophone = false;
+                    document.getElementById('micBtn').textContent = '🎤 Use Microphone';
+                    return;
+                }
+                
+                try {
+                    this.initAudioContext();
+                    this.stop();
+                    
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    
+                    if (this.source) {
+                        this.source.disconnect();
+                    }
+                    
+                    this.source = this.audioContext.createMediaStreamSource(stream);
+                    this.source.connect(this.analyser);
+                    
+                    this.isMicrophone = true;
+                    document.getElementById('micBtn').textContent = '🔴 Stop Microphone';
+                    this.enableControls();
+                    this.play();
+                } catch (error) {
+                    console.error('Error accessing microphone:', error);
+                    alert('Could not access microphone. Please check permissions.');
+                }
+            }
+
+            play() {
+                if (this.audio && !this.isMicrophone) {
+                    this.audio.play();
+                }
+                this.isPlaying = true;
+                this.animate();
+                document.getElementById('playBtn').disabled = true;
+                document.getElementById('pauseBtn').disabled = false;
+            }
+
+            pause() {
+                if (this.audio && !this.isMicrophone) {
+                    this.audio.pause();
+                }
+                this.isPlaying = false;
+                cancelAnimationFrame(this.animationId);
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+            }
+
+            stop() {
+                if (this.audio && !this.isMicrophone) {
+                    this.audio.pause();
+                    this.audio.currentTime = 0;
+                }
+                this.isPlaying = false;
+                cancelAnimationFrame(this.animationId);
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+                document.getElementById('progressFill').style.width = '0%';
+                document.getElementById('currentTime').textContent = '0:00';
+            }
+
+            enableControls() {
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = false;
+            }
+
+            animate() {
+                if (!this.isPlaying) return;
+                
+                this.animationId = requestAnimationFrame(() => this.animate());
+                
+                this.analyser.getByteFrequencyData(this.dataArray);
+                
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                switch(this.settings.visualMode) {
+                    case 'bars':
+                        this.drawBars();
+                        break;
+                    case 'wave':
+                        this.drawWave();
+                        break;
+                    case 'circular':
+                        this.drawCircular();
+                        break;
+                    case 'mirror':
+                        this.drawMirror();
+                        break;
+                    case 'particles':
+                        this.drawParticles();
+                        break;
+                    case 'neural':
+                        this.drawNeuralNetwork();
+                        break;
+                    case 'dna':
+                        this.drawDNAHelix();
+                        break;
+                }
+            }
+
+            initParticles() {
+                this.particles = [];
+                for (let i = 0; i < 100; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        size: Math.random() * 3 + 1,
+                        life: 1
+                    });
+                }
+            }
+
+            initNeuralNetwork() {
+                this.neuralNodes = [];
+                const layers = [4, 6, 8, 6, 4];
+                let y = 0;
+                
+                layers.forEach((count, layerIndex) => {
+                    const x = (this.canvas.width / (layers.length + 1)) * (layerIndex + 1);
+                    const layerNodes = [];
+                    
+                    for (let i = 0; i < count; i++) {
+                        y = (this.canvas.height / (count + 1)) * (i + 1);
+                        layerNodes.push({
+                            x: x,
+                            y: y,
+                            activation: 0,
+                            connections: []
+                        });
+                    }
+                    this.neuralNodes.push(layerNodes);
+                });
+            }
+
+            initDNAHelix() {
+                this.dnaPoints = [];
+                const points = 100;
+                for (let i = 0; i < points; i++) {
+                    this.dnaPoints.push({
+                        angle: (i / points) * Math.PI * 4,
+                        y: (i / points) * this.canvas.height,
+                        offset: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+
+            drawBars() {
+                const barWidth = this.canvas.width / this.settings.barCount;
+                const step = Math.floor(this.dataArray.length / this.settings.barCount);
+                
+                for (let i = 0; i < this.settings.barCount; i++) {
+                    const value = this.dataArray[i * step];
+                    const barHeight = (value / 255) * this.canvas.height * 0.8;
+                    const x = i * barWidth;
+                    const y = this.canvas.height - barHeight;
+                    
+                    const gradient = this.ctx.createLinearGradient(0, y, 0, this.canvas.height);
+                    const colors = this.getColors(i / this.settings.barCount, value / 255);
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(1, colors[1]);
+                    
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fillRect(x + barWidth * 0.1, y, barWidth * 0.8, barHeight);
+                    
+                    if (value > 200) {
+                        this.ctx.shadowBlur = 20;
+                        this.ctx.shadowColor = colors[0];
+                        this.ctx.fillRect(x + barWidth * 0.1, y, barWidth * 0.8, barHeight);
+                        this.ctx.shadowBlur = 0;
+                    }
+                }
+            }
+
+            drawNeuralNetwork() {
+                const step = Math.floor(this.dataArray.length / this.settings.barCount);
+                
+                // Update node activations
+                this.neuralNodes.forEach((layer, layerIndex) => {
+                    layer.forEach((node, nodeIndex) => {
+                        const dataIndex = (layerIndex * layer.length + nodeIndex) * step;
+                        node.activation = this.dataArray[dataIndex] / 255;
+                    });
+                });
+                
+                // Draw connections
+                for (let i = 0; i < this.neuralNodes.length - 1; i++) {
+                    const currentLayer = this.neuralNodes[i];
+                    const nextLayer = this.neuralNodes[i + 1];
+                    
+                    currentLayer.forEach(node1 => {
+                        nextLayer.forEach(node2 => {
+                            const activation = (node1.activation + node2.activation) / 2;
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(node1.x, node1.y);
+                            this.ctx.lineTo(node2.x, node2.y);
+                            
+                            const gradient = this.ctx.createLinearGradient(
+                                node1.x, node1.y, node2.x, node2.y
+                            );
+                            const colors = this.getColors(activation, activation);
+                            gradient.addColorStop(0, colors[0]);
+                            gradient.addColorStop(1, colors[1]);
+                            
+                            this.ctx.strokeStyle = gradient;
+                            this.ctx.lineWidth = activation * 3;
+                            this.ctx.globalAlpha = activation * 0.5;
+                            this.ctx.stroke();
+                            this.ctx.globalAlpha = 1;
+                        });
+                    });
+                }
+                
+                // Draw nodes
+                this.neuralNodes.forEach(layer => {
+                    layer.forEach(node => {
+                        this.ctx.beginPath();
+                        this.ctx.arc(node.x, node.y, 10 + node.activation * 20, 0, Math.PI * 2);
+                        
+                        const gradient = this.ctx.createRadialGradient(
+                            node.x, node.y, 0,
+                            node.x, node.y, 10 + node.activation * 20
+                        );
+                        const colors = this.getColors(node.activation, node.activation);
+                        gradient.addColorStop(0, colors[0]);
+                        gradient.addColorStop(1, colors[1]);
+                        
+                        this.ctx.fillStyle = gradient;
+                        this.ctx.fill();
+                        
+                        if (node.activation > 0.7) {
+                            this.ctx.shadowBlur = 20;
+                            this.ctx.shadowColor = colors[0];
+                            this.ctx.fill();
+                            this.ctx.shadowBlur = 0;
+                        }
+                    });
+                });
+            }
+
+            drawDNAHelix() {
+                const step = Math.floor(this.dataArray.length / this.settings.barCount);
+                const centerX = this.canvas.width / 2;
+                const radius = Math.min(centerX, this.canvas.height / 2) * 0.3;
+                
+                this.dnaPoints.forEach((point, i) => {
+                    const dataIndex = i * step;
+                    const value = this.dataArray[dataIndex] / 255;
+                    
+                    // Calculate helix positions
+                    const x1 = centerX + Math.cos(point.angle + point.offset) * (radius + value * 50);
+                    const x2 = centerX + Math.cos(point.angle + point.offset + Math.PI) * (radius + value * 50);
+                    
+                    // Draw helix strands
+                    this.ctx.beginPath();
+                    this.ctx.arc(x1, point.y, 3 + value * 5, 0, Math.PI * 2);
+                    this.ctx.arc(x2, point.y, 3 + value * 5, 0, Math.PI * 2);
+                    
+                    const colors = this.getColors(i / this.dnaPoints.length, value);
+                    const gradient = this.ctx.createRadialGradient(x1, point.y, 0, x1, point.y, 3 + value * 5);
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(1, colors[1]);
+                    
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fill();
+                    
+                    // Draw connections between strands
+                    if (i % 5 === 0) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x1, point.y);
+                        this.ctx.lineTo(x2, point.y);
+                        this.ctx.strokeStyle = colors[0];
+                        this.ctx.lineWidth = 1;
+                        this.ctx.globalAlpha = 0.3;
+                        this.ctx.stroke();
+                        this.ctx.globalAlpha = 1;
+                    }
+                    
+                    point.angle += 0.02;
+                });
+            }
+
+            drawWave() {
+                this.ctx.lineWidth = 3;
+                this.ctx.beginPath();
+                
+                const sliceWidth = this.canvas.width / this.settings.barCount;
+                const step = Math.floor(this.dataArray.length / this.settings.barCount);
+                
+                for (let i = 0; i < this.settings.barCount; i++) {
+                    const value = this.dataArray[i * step];
+                    const x = i * sliceWidth;
+                    const y = this.canvas.height / 2 + (value - 128) * 2;
+                    
+                    if (i === 0) {
+                        this.ctx.moveTo(x, y);
+                    } else {
+                        this.ctx.lineTo(x, y);
+                    }
+                }
+                
+                const gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, 0);
+                const colors = this.getColors(0.5, 0.5);
+                gradient.addColorStop(0, colors[0]);
+                gradient.addColorStop(0.5, colors[1]);
+                gradient.addColorStop(1, colors[0]);
+                
+                this.ctx.strokeStyle = gradient;
+                this.ctx.stroke();
+                
+                // Mirror wave
+                this.ctx.beginPath();
+                for (let i = 0; i < this.settings.barCount; i++) {
+                    const value = this.dataArray[i * step];
+                    const x = i * sliceWidth;
+                    const y = this.canvas.height / 2 - (value - 128) * 2;
+                    
+                    if (i === 0) {
+                        this.ctx.moveTo(x, y);
+                    } else {
+                        this.ctx.lineTo(x, y);
+                    }
+                }
+                this.ctx.strokeStyle = gradient;
+                this.ctx.globalAlpha = 0.5;
+                this.ctx.stroke();
+                this.ctx.globalAlpha = 1;
+            }
+
+            drawCircular() {
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+                const radius = Math.min(centerX, centerY) * 0.3;
+                const step = Math.floor(this.dataArray.length / this.settings.barCount);
+                
+                for (let i = 0; i < this.settings.barCount; i++) {
+                    const value = this.dataArray[i * step];
+                    const angle = (i / this.settings.barCount) * Math.PI * 2;
+                    const barHeight = (value / 255) * radius;
+                    
+                    const x1 = centerX + Math.cos(angle) * radius;
+                    const y1 = centerY + Math.sin(angle) * radius;
+                    const x2 = centerX + Math.cos(angle) * (radius + barHeight);
+                    const y2 = centerY + Math.sin(angle) * (radius + barHeight);
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x1, y1);
+                    this.ctx.lineTo(x2, y2);
+                    
+                    const colors = this.getColors(i / this.settings.barCount, value / 255);
+                    const gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(1, colors[1]);
+                    
+                    this.ctx.strokeStyle = gradient;
+                    this.ctx.lineWidth = (this.canvas.width / this.settings.barCount) * 0.8;
+                    this.ctx.lineCap = 'round';
+                    this.ctx.stroke();
+                }
+                
+                // Draw center circle
+                this.ctx.beginPath();
+                this.ctx.arc(centerX, centerY, radius * 0.9, 0, Math.PI * 2);
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                this.ctx.fill();
+            }
+
+            drawMirror() {
+                const barWidth = this.canvas.width / this.settings.barCount;
+                const step = Math.floor(this.dataArray.length / this.settings.barCount);
+                const middleY = this.canvas.height / 2;
+                
+                for (let i = 0; i < this.settings.barCount; i++) {
+                    const value = this.dataArray[i * step];
+                    const barHeight = (value / 255) * middleY * 0.8;
+                    const x = i * barWidth;
+                    
+                    const colors = this.getColors(i / this.settings.barCount, value / 255);
+                    const gradient = this.ctx.createLinearGradient(0, middleY - barHeight, 0, middleY + barHeight);
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(0.5, colors[1]);
+                    gradient.addColorStop(1, colors[0]);
+                    
+                    // Top bar
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fillRect(x + barWidth * 0.1, middleY - barHeight, barWidth * 0.8, barHeight);
+                    
+                    // Bottom bar (mirror)
+                    this.ctx.globalAlpha = 0.7;
+                    this.ctx.fillRect(x + barWidth * 0.1, middleY, barWidth * 0.8, barHeight);
+                    this.ctx.globalAlpha = 1;
+                }
+            }
+
+            drawParticles() {
+                const step = Math.floor(this.dataArray.length / this.settings.barCount);
+                const avgValue = this.dataArray.reduce((a, b) => a + b, 0) / this.dataArray.length;
+                const intensity = avgValue / 255;
+                
+                this.particles.forEach((particle, index) => {
+                    const dataIndex = index % this.settings.barCount;
+                    const value = this.dataArray[dataIndex * step];
+                    const normalizedValue = value / 255;
+                    
+                    // Update particle physics
+                    particle.vx += (Math.random() - 0.5) * normalizedValue * 2;
+                    particle.vy += (Math.random() - 0.5) * normalizedValue * 2;
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    
+                    // Bounce off walls
+                    if (particle.x < 0 || particle.x > this.canvas.width) particle.vx *= -0.8;
+                    if (particle.y < 0 || particle.y > this.canvas.height) particle.vy *= -0.8;
+                    
+                    // Keep particles in bounds
+                    particle.x = Math.max(0, Math.min(this.canvas.width, particle.x));
+                    particle.y = Math.max(0, Math.min(this.canvas.height, particle.y));
+                    
+                    // Apply damping
+                    particle.vx *= 0.98;
+                    particle.vy *= 0.98;
+                    
+                    // Draw particle
+                    const colors = this.getColors(index / this.particles.length, normalizedValue);
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size * (1 + normalizedValue), 0, Math.PI * 2);
+                    
+                    const gradient = this.ctx.createRadialGradient(
+                        particle.x, particle.y, 0,
+                        particle.x, particle.y, particle.size * (1 + normalizedValue)
+                    );
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fill();
+                    
+                    // Draw connections between nearby particles
+                    this.particles.forEach((other, otherIndex) => {
+                        if (index < otherIndex) {
+                            const distance = Math.hypot(particle.x - other.x, particle.y - other.y);
+                            if (distance < 100 * (1 + intensity)) {
+                                this.ctx.beginPath();
+                                this.ctx.moveTo(particle.x, particle.y);
+                                this.ctx.lineTo(other.x, other.y);
+                                this.ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - distance / 100) * intensity * 0.3})`;
+                                this.ctx.lineWidth = 0.5;
+                                this.ctx.stroke();
+                            }
+                        }
+                    });
+                });
+            }
+
+            getColors(position, intensity) {
+                const colors = this.themes[this.settings.theme];
+                
+                switch(this.settings.colorMode) {
+                    case 'gradient':
+                        return colors;
+                    case 'rainbow':
+                        const hue = position * 360;
+                        return [`hsl(${hue}, 100%, ${50 + intensity * 30}%)`, `hsl(${hue + 30}, 100%, ${40 + intensity * 20}%)`];
+                    case 'monochrome':
+                        const brightness = 100 + intensity * 155;
+                        return [`rgb(${brightness}, ${brightness}, ${brightness})`, `rgb(${brightness * 0.7}, ${brightness * 0.7}, ${brightness * 0.7})`];
+                    case 'neon':
+                        const neonColors = [
+                            ['#ff00ff', '#00ffff'],
+                            ['#ffff00', '#ff00ff'],
+                            ['#00ff00', '#ff0080']
+                        ];
+                        return neonColors[Math.floor(position * 3)];
+                    case 'ai-dynamic':
+                        // Dynamic colors based on AI analysis
+                        const aiHue = (this.aiData.energy * 3.6) + (position * 60);
+                        return [`hsl(${aiHue}, 100%, ${50 + intensity * 30}%)`, `hsl(${aiHue + 60}, 100%, ${40 + intensity * 20}%)`];
+                    default:
+                        return colors;
+                }
+            }
+
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // Initialize the enhanced visualizer
+        const visualizer = new AIEnhancedAudioVisualizer();
+
+        // Global upgrade function
+        function performUpgrade() {
+            const notification = document.getElementById('upgradeNotification');
+            notification.innerHTML = `
+                <div class="upgrade-icon">✨</div>
+                <div>
+                    <strong>Updating...</strong>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Installing new features</div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                document.getElementById('version').textContent = '2.1.0';
+                document.getElementById('lastUpdate').textContent = 'Last update: Just now';
+                
+                // Add new visual mode dynamically
+                const visualMode = document.getElementById('visualMode');
+                const newOption = document.createElement('option');
+                newOption.value = 'hologram';
+                newOption.textContent = 'Hologram (New!)';
+                visualMode.appendChild(newOption);
+                
+                // Show success message
+                notification.innerHTML = `
+                    <div class="upgrade-icon">✅</div>
+                    <div>
+                        <strong>Update Complete!</strong>
+                        <div style="font-size: 0.9rem; opacity: 0.9;">New features are now available</div>
+                    </div>
+                `;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
