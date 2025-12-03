@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Merit Box - AI Powered</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --dark-bg: #1a1a2e;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --success-color: #00b894;
+            --warning-color: #fdcb6e;
+            --danger-color: #d63031;
+            --info-color: #74b9ff;
+        }
+
+        [data-theme="dark"] {
+            --light-bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text-primary: #f5f7fa;
+            --text-secondary: #b2bec3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            background-size: 600% 600%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Cards */
+        .glass-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Merit Counter */
+        .merit-counter {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .merit-value {
+            font-size: 5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .merit-label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .merit-btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 15px 40px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .merit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .merit-btn:hover::before {
+            left: 100%;
+        }
+
+        .merit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+        }
+
+        .merit-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Particle Effect */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--primary-color);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        @keyframes particle-animation {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 3px solid var(--primary-color);
+        }
+
+        .user-info h5 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .user-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Achievement Badges */
+        .achievement {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .achievement:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .achievement-bronze {
+            background: linear-gradient(45deg, #cd7f32, #e4a853);
+        }
+
+        .achievement-silver {
+            background: linear-gradient(45deg, #c0c0c0, #e8e8e8);
+        }
+
+        .achievement-gold {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+        }
+
+        .achievement-platinum {
+            background: linear-gradient(45deg, #e5e4e2, #f0eff0);
+        }
+
+        /* Leaderboard */
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .leaderboard-rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .leaderboard-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .leaderboard-info {
+            flex-grow: 1;
+        }
+
+        .leaderboard-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .leaderboard-merits {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Categories */
+        .category-btn {
+            background: rgba(108, 92, 231, 0.1);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* AI Message */
+        .ai-message {
+            background: linear-gradient(45deg, rgba(108, 92, 231, 0.1), rgba(253, 121, 168, 0.1));
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .ai-message i {
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+
+        /* Stats Chart */
+        .stats-chart {
+            height: 300px;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .chart-bar {
+            position: absolute;
+            bottom: 0;
+            width: 40px;
+            background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+
+        .chart-label {
+            position: absolute;
+            bottom: -25px;
+            width: 40px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .chart-value {
+            position: absolute;
+            top: -25px;
+            width: 40px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        /* Admin Panel */
+        .admin-nav {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-nav-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .admin-nav-item:hover {
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .admin-nav-item.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        /* AI Assistant */
+        .ai-assistant {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(253, 121, 168, 0.1));
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .ai-assistant-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .ai-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .ai-message-bubble {
+            background: white;
+            border-radius: 15px 15px 15px 0;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .ai-input-group {
+            display: flex;
+        }
+
+        .ai-input {
+            flex-grow: 1;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 20px 0 0 20px;
+            padding: 10px 15px;
+            outline: none;
+        }
+
+        .ai-send-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 20px 20px 0;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ai-send-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .close {
+            color: var(--text-secondary);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background: var(--text-secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            min-width: 300px;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .toast-icon {
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .toast-success .toast-icon {
+            color: var(--success-color);
+        }
+
+        .toast-error .toast-icon {
+            color: var(--danger-color);
+        }
+
+        .toast-info .toast-icon {
+            color: var(--info-color);
+        }
+
+        .toast-body {
+            flex-grow: 1;
+        }
+
+        .toast-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .toast-message {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(108, 92, 231, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 15px;
+            }
+            
+            .merit-value {
+                font-size: 3rem;
+            }
+            
+            .glass-card {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="logo">
+                    <i class="fas fa-trophy"></i> Merit Box AI
+                </div>
+                <div class="d-flex align-items-center">
+                    <button class="theme-toggle me-3" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light" onclick="showLoginModal()">
+                        <i class="fas fa-user-shield"></i> Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-lg-8">
+                <!-- Merit Counter Card -->
+                <div class="glass-card merit-counter">
+                    <div class="particles" id="particles"></div>
+                    
+                    <div class="user-profile">
+                        <img src="https://picsum.photos/seed/user1/50/50.jpg" alt="User Avatar" class="user-avatar">
+                        <div class="user-info">
+                            <h5 id="userName">Guest User</h5>
+                            <p>Level <span id="userLevel">1</span> Contributor</p>
+                        </div>
+                    </div>
+                    
+                    <div class="merit-value" id="meritCount">0</div>
+                    <div class="merit-label">Total Merits in the Community</div>
+                    
+                    <button class="merit-btn" onclick="addMerit()">
+                        <i class="fas fa-plus-circle"></i> Add Merit
+                    </button>
+                    
+                    <div class="mt-4">
+                        <div class="form-group">
+                            <label class="form-label">Select Category:</label>
+                            <div id="categoryButtons">
+                                <button class="category-btn active" data-category="general">General</button>
+                                <button class="category-btn" data-category="helpfulness">Helpfulness</button>
+                                <button class="category-btn" data-category="creativity">Creativity</button>
+                                <button class="category-btn" data-category="teamwork">Teamwork</button>
+                                <button class="category-btn" data-category="innovation">Innovation</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Reason (Optional):</label>
+                            <textarea class="form-control form-textarea" id="meritReason" placeholder="Why are you adding this merit?"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-message" id="aiMessage">
+                        <i class="fas fa-robot"></i> <span id="aiMessageText">Welcome to Merit Box AI! Add merits to see personalized insights.</span>
+                    </div>
+                </div>
+                
+                <!-- Statistics Card -->
+                <div class="glass-card">
+                    <h3 class="mb-4">Merit Statistics</h3>
+                    <div class="stats-chart" id="statsChart"></div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="col-lg-4">
+                <!-- Achievements Card -->
+                <div class="glass-card">
+                    <h3 class="mb-4">Achievements</h3>
+                    <div id="achievementsList">
+                        <div class="achievement achievement-bronze">
+                            <i class="fas fa-medal"></i> First Steps
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Leaderboard Card -->
+                <div class="glass-card">
+                    <h3 class="mb-4">Leaderboard</h3>
+                    <div id="leaderboardList">
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">1</div>
+                            <img src="https://picsum.photos/seed/user2/40/40.jpg" alt="User" class="leaderboard-avatar">
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">Alex Johnson</div>
+                                <div class="leaderboard-merits">Level 5 Contributor</div>
+                            </div>
+                            <div class="leaderboard-score">42</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">2</div>
+                            <img src="https://picsum.photos/seed/user3/40/40.jpg" alt="User" class="leaderboard-avatar">
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">Sam Taylor</div>
+                                <div class="leaderboard-merits">Level 4 Contributor</div>
+                            </div>
+                            <div class="leaderboard-score">38</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">3</div>
+                            <img src="https://picsum.photos/seed/user4/40/40.jpg" alt="User" class="leaderboard-avatar">
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">Jordan Lee</div>
+                                <div class="leaderboard-merits">Level 4 Contributor</div>
+                            </div>
+                            <div class="leaderboard-score">35</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity Card -->
+                <div class="glass-card">
+                    <h3 class="mb-4">Recent Activity</h3>
+                    <div id="recentActivity">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://picsum.photos/seed/user5/30/30.jpg" alt="User" class="rounded-circle me-2" width="30" height="30">
+                            <div>
+                                <div class="fw-bold">Morgan Chen</div>
+                                <div class="small text-muted">Added a merit for <span class="badge bg-primary">Helpfulness</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://picsum.photos/seed/user6/30/30.jpg" alt="User" class="rounded-circle me-2" width="30" height="30">
+                            <div>
+                                <div class="fw-bold">Riley Smith</div>
+                                <div class="small text-muted">Added a merit for <span class="badge bg-primary">Creativity</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Admin Login</h2>
+                <span class="close" onclick="closeLoginModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="loginAlert" class="alert alert-danger d-none" role="alert">
+                    Invalid credentials. Please try again.
+                </div>
+                <form onsubmit="login(event)">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">Hint: Use "admin" as both username and password</small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Admin Panel Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Admin Panel</h2>
+                <span class="close" onclick="closeAdminModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="admin-nav">
+                    <div class="admin-nav-item active" onclick="switchAdminTab('overview')">Overview</div>
+                    <div class="admin-nav-item" onclick="switchAdminTab('merits')">Manage Merits</div>
+                    <div class="admin-nav-item" onclick="switchAdminTab('users')">Users</div>
+                    <div class="admin-nav-item" onclick="switchAdminTab('ai')">AI Assistant</div>
+                    <div class="admin-nav-item" onclick="switchAdminTab('settings')">Settings</div>
+                </div>
+                
+                <!-- Overview Tab -->
+                <div id="admin-overview" class="admin-content active">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="glass-card">
+                                <h3>Total Merits</h3>
+                                <div class="display-4" id="adminTotalMerits">0</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="glass-card">
+                                <h3>Active Users</h3>
+                                <div class="display-4">24</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="glass-card">
+                                <h3>Today's Activity</h3>
+                                <div class="display-4">8</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card mt-4">
+                        <h3>Recent Merit History</h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Category</th>
+                                        <th>Reason</th>
+                                        <th>Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="meritHistoryTable">
+                                    <tr>
+                                        <td colspan="4" class="text-center">No merit history available</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Manage Merits Tab -->
+                <div id="admin-merits" class="admin-content">
+                    <div class="glass-card">
+                        <h3>Adjust Merit Count</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Current Merit Count</label>
+                                    <div class="display-4" id="adminCurrentMerits">0</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">New Merit Count</label>
+                                    <input type="number" class="form-control" id="newMeritCount" min="0">
+                                    <button class="btn btn-primary mt-2" onclick="updateMeritCount()">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4>Quick Actions</h4>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button class="btn btn-success" onclick="adjustMerit(10)">
+                                    <i class="fas fa-plus"></i> Add 10
+                                </button>
+                                <button class="btn btn-success" onclick="adjustMerit(50)">
+                                    <i class="fas fa-plus"></i> Add 50
+                                </button>
+                                <button class="btn btn-success" onclick="adjustMerit(100)">
+                                    <i class="fas fa-plus"></i> Add 100
+                                </button>
+                                <button class="btn btn-danger" onclick="adjustMerit(-10)">
+                                    <i class="fas fa-minus"></i> Subtract 10
+                                </button>
+                                <button class="btn btn-danger" onclick="adjustMerit(-50)">
+                                    <i class="fas fa-minus"></i> Subtract 50
+                                </button>
+                                <button class="btn btn-danger" onclick="adjustMerit(-100)">
+                                    <i class="fas fa-minus"></i> Subtract 100
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Users Tab -->
+                <div id="admin-users" class="admin-content">
+                    <div class="glass-card">
+                        <h3>User Management</h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Level</th>
+                                        <th>Merits</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://picsum.photos/seed/user2/30/30.jpg" alt="User" class="rounded-circle me-2" width="30" height="30">
+                                                Alex Johnson
+                                            </div>
+                                        </td>
+                                        <td>5</td>
+                                        <td>42</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Edit</button>
+                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://picsum.photos/seed/user3/30/30.jpg" alt="User" class="rounded-circle me-2" width="30" height="30">
+                                                Sam Taylor
+                                            </div>
+                                        </td>
+                                        <td>4</td>
+                                        <td>38</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Edit</button>
+                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Assistant Tab -->
+                <div id="admin-ai" class="admin-content">
+                    <div class="ai-assistant">
+                        <div class="ai-assistant-header">
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div>
+                                <h4>Merit AI Assistant</h4>
+                                <p class="mb-0">Ask me anything about your merit system</p>
+                            </div>
+                        </div>
+                        
+                        <div id="aiChatMessages" style="height: 300px; overflow-y: auto; margin-bottom: 15px;">
+                            <div class="ai-message-bubble">
+                                Hello! I'm your Merit AI Assistant. I can help you analyze trends, generate insights, and provide recommendations for your merit system. How can I assist you today?
+                            </div>
+                        </div>
+                        
+                        <div class="ai-input-group">
+                            <input type="text" class="ai-input" id="aiInput" placeholder="Ask me anything...">
+                            <button class="ai-send-btn" onclick="sendAIMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card mt-4">
+                        <h3>AI Insights</h3>
+                        <div id="aiInsights">
+                            <div class="alert alert-info">
+                                <i class="fas fa-lightbulb"></i> Your community is most active in the <strong>Helpfulness</strong> category, with 35% of all merits.
+                            </div>
+                            <div class="alert alert-success">
+                                <i class="fas fa-chart-line"></i> Merit activity has increased by 15% this week compared to last week.
+                            </div>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i> Consider promoting the <strong>Innovation</strong> category, as it has the lowest participation rate.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div id="admin-settings" class="admin-content">
+                    <div class="glass-card">
+                        <h3>System Settings</h3>
+                        <div class="form-group">
+                            <label class="form-label">Site Name</label>
+                            <input type="text" class="form-control" value="Merit Box AI">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Site Description</label>
+                            <textarea class="form-control form-textarea">A community-driven merit system powered by AI</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">OpenAI API Key</label>
+                            <input type="password" class="form-control" placeholder="Enter your OpenAI API key">
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="enableAINotifications" checked>
+                            <label class="form-check-label" for="enableAINotifications">
+                                Enable AI-generated notifications
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="enableAIAchievements" checked>
+                            <label class="form-check-label" for="enableAIAchievements">
+                                Enable AI-generated achievements
+                            </label>
+                        </div>
+                        <button class="btn btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize the app
+        let currentMeritCount = 0;
+        let isAdminLoggedIn = false;
+        let selectedCategory = 'general';
+        let userName = 'Guest User';
+        let userLevel = 1;
+        let userMerits = 0;
+        let darkMode = false;
+        
+        // Simulated database (in a real app, this would be a backend API)
+        const meritDB = {
+            count: 0,
+            history: [],
+            users: [],
+            categories: {
+                general: { count: 0, color: '#6c5ce7' },
+                helpfulness: { count: 0, color: '#00b894' },
+                creativity: { count: 0, color: '#fdcb6e' },
+                teamwork: { count: 0, color: '#74b9ff' },
+                innovation: { count: 0, color: '#e17055' }
+            },
+            dailyStats: {}
+        };
+        
+        // Load data from localStorage
+        function loadData() {
+            const savedCount = localStorage.getItem('meritCount');
+            if (savedCount) {
+                currentMeritCount = parseInt(savedCount);
+                meritDB.count = currentMeritCount;
+            }
+            
+            const savedHistory = localStorage.getItem('meritHistory');
+            if (savedHistory) {
+                meritDB.history = JSON.parse(savedHistory);
+            }
+            
+            const savedCategories = localStorage.getItem('meritCategories');
+            if (savedCategories) {
+                meritDB.categories = JSON.parse(savedCategories);
+            }
+            
+            const savedDailyStats = localStorage.getItem('meritDailyStats');
+            if (savedDailyStats) {
+                meritDB.dailyStats = JSON.parse(savedDailyStats);
+            }
+            
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                userName = user.name;
+                userLevel = user.level;
+                userMerits = user.merits;
+            }
+            
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                darkMode = true;
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeIcon').className = 'fas fa-sun';
+            }
+            
+            updateMeritDisplay();
+            updateChart();
+            updateAchievements();
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('meritCount', currentMeritCount.toString());
+            localStorage.setItem('meritHistory', JSON.stringify(meritDB.history));
+            localStorage.setItem('meritCategories', JSON.stringify(meritDB.categories));
+            localStorage.setItem('meritDailyStats', JSON.stringify(meritDB.dailyStats));
+            
+            const currentUser = {
+                name: userName,
+                level: userLevel,
+                merits: userMerits
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        
+        // Update merit display
+        function updateMeritDisplay() {
+            document.getElementById('meritCount').textContent = currentMeritCount;
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('userLevel').textContent = userLevel;
+            
+            if (isAdminLoggedIn) {
+                document.getElementById('adminTotalMerits').textContent = currentMeritCount;
+                document.getElementById('adminCurrentMerits').textContent = currentMeritCount;
+                document.getElementById('newMeritCount').value = currentMeritCount;
+                updateMeritHistoryTable();
+            }
+        }
+        
+        // Add merit when button is clicked
+        function addMerit() {
+            const reason = document.getElementById('meritReason').value;
+            
+            currentMeritCount++;
+            userMerits++;
+            
+            // Update user level based on merits
+            if (userMerits >= 50 && userLevel < 5) {
+                userLevel = 5;
+                showToast('success', 'Level Up!', 'You have reached Level 5!');
+            } else if (userMerits >= 30 && userLevel < 4) {
+                userLevel = 4;
+                showToast('success', 'Level Up!', 'You have reached Level 4!');
+            } else if (userMerits >= 15 && userLevel < 3) {
+                userLevel = 3;
+                showToast('success', 'Level Up!', 'You have reached Level 3!');
+            } else if (userMerits >= 5 && userLevel < 2) {
+                userLevel = 2;
+                showToast('success', 'Level Up!', 'You have reached Level 2!');
+            }
+            
+            // Update category count
+            meritDB.categories[selectedCategory].count++;
+            
+            // Add to history
+            const timestamp = new Date().toISOString();
+            const historyEntry = {
+                user: userName,
+                category: selectedCategory,
+                reason: reason || 'No reason provided',
+                timestamp: timestamp
+            };
+            meritDB.history.unshift(historyEntry);
+            
+            // Update daily stats
+            const today = new Date().toISOString().split('T')[0];
+            if (!meritDB.dailyStats[today]) {
+                meritDB.dailyStats[today] = 0;
+            }
+            meritDB.dailyStats[today]++;
+            
+            // Save data
+            saveData();
+            
+            // Create particle effect
+            createParticles();
+            
+            // Animate the counter
+            const countElement = document.getElementById('meritCount');
+            countElement.classList.add('pulse');
+            setTimeout(() => {
+                countElement.classList.remove('pulse');
+            }, 500);
+            
+            // Update displays
+            updateMeritDisplay();
+            updateChart();
+            updateAchievements();
+            updateRecentActivity();
+            
+            // Generate AI message
+            generateAIMessage();
+            
+            // Clear reason field
+            document.getElementById('meritReason').value = '';
+            
+            // Show toast
+            showToast('success', 'Merit Added!', `You've added a merit for ${selectedCategory}.`);
+        }
+        
+        // Create particle effect
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const colors = ['#6c5ce7', '#a29bfe', '#fd79a8', '#fdcb6e', '#00b894', '#74b9ff'];
+            
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 10 + 5;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.background = color;
+                
+                const moveX = (Math.random() - 0.5) * 200;
+                const moveY = (Math.random() - 0.5) * 200;
+                
+                particle.style.setProperty('--x', `${moveX}px`);
+                particle.style.setProperty('--y', `${moveY}px`);
+                particle.style.animation = 'particle-animation 1s ease-out forwards';
+                
+                particlesContainer.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+        
+        // Generate AI message
+        function generateAIMessage() {
+            const messages = [
+                `Great job contributing to the ${selectedCategory} category! Your efforts are appreciated.`,
+                `You've just added to the community's ${currentMeritCount} total merits. Keep up the good work!`,
+                `Your contribution to ${selectedCategory} helps build a stronger community. Thank you!`,
+                `The ${selectedCategory} category now has ${meritDB.categories[selectedCategory].count} merits thanks to you!`,
+                `You're making a difference! Your merit for ${selectedCategory} has been recorded.`
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('aiMessageText').textContent = randomMessage;
+            
+            // Animate the AI message
+            const aiMessage = document.getElementById('aiMessage');
+            aiMessage.style.opacity = '0';
+            setTimeout(() => {
+                aiMessage.style.opacity = '1';
+            }, 100);
+        }
+        
+        // Update chart
+        function updateChart() {
+            const chartContainer = document.getElementById('statsChart');
+            chartContainer.innerHTML = '';
+            
+            // Get the last 7 days
+            const days = [];
+            const values = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                const dayName = date.toLocaleDateString('en', { weekday: 'short' });
+                days.push(dayName);
+                values.push(meritDB.dailyStats[dateStr] || 0);
+            }
+            
+            // Find the maximum value for scaling
+            const maxValue = Math.max(...values, 1);
+            
+            // Create bars
+            const barWidth = 100 / days.length;
+            
+            days.forEach((day, index) => {
+                const bar = document.createElement('div');
+                bar.classList.add('chart-bar');
+                bar.style.left = `${index * barWidth}%`;
+                bar.style.width = `${barWidth * 0.8}%`;
+                bar.style.height = `${(values[index] / maxValue) * 100}%`;
+                
+                const label = document.createElement('div');
+                label.classList.add('chart-label');
+                label.style.left = `${index * barWidth}%`;
+                label.textContent = day;
+                
+                const value = document.createElement('div');
+                value.classList.add('chart-value');
+                value.style.left = `${index * barWidth}%`;
+                value.textContent = values[index];
+                
+                chartContainer.appendChild(bar);
+                chartContainer.appendChild(label);
+                chartContainer.appendChild(value);
+            });
+        }
+        
+        // Update achievements
+        function updateAchievements() {
+            const achievementsList = document.getElementById('achievementsList');
+            achievementsList.innerHTML = '';
+            
+            // Define achievements
+            const achievements = [
+                { id: 'first', name: 'First Steps', class: 'achievement-bronze', unlocked: userMerits >= 1 },
+                { id: 'contributor', name: 'Contributor', class: 'achievement-bronze', unlocked: userMerits >= 5 },
+                { id: 'helper', name: 'Helper', class: 'achievement-silver', unlocked: userMerits >= 10 },
+                { id: 'dedicated', name: 'Dedicated', class: 'achievement-silver', unlocked: userMerits >= 25 },
+                { id: 'expert', name: 'Expert', class: 'achievement-gold', unlocked: userMerits >= 50 },
+                { id: 'master', name: 'Master', class: 'achievement-platinum', unlocked: userMerits >= 100 }
+            ];
+            
+            // Add achievements to the list
+            achievements.forEach(achievement => {
+                if (achievement.unlocked) {
+                    const achievementElement = document.createElement('div');
+                    achievementElement.classList.add('achievement', achievement.class);
+                    achievementElement.innerHTML = `<i class="fas fa-medal"></i> ${achievement.name}`;
+                    achievementsList.appendChild(achievementElement);
+                }
+            });
+        }
+        
+        // Update recent activity
+        function updateRecentActivity() {
+            const recentActivity = document.getElementById('recentActivity');
+            recentActivity.innerHTML = '';
+            
+            // Get the last 3 activities
+            const recentItems = meritDB.history.slice(0, 3);
+            
+            if (recentItems.length === 0) {
+                recentActivity.innerHTML = '<p class="text-muted">No recent activity</p>';
+                return;
+            }
+            
+            recentItems.forEach(item => {
+                const activityElement = document.createElement('div');
+                activityElement.classList.add('d-flex', 'align-items-center', 'mb-3');
+                
+                const categoryColors = {
+                    general: 'primary',
+                    helpfulness: 'success',
+                    creativity: 'warning',
+                    teamwork: 'info',
+                    innovation: 'danger'
+                };
+                
+                activityElement.innerHTML = `
+                    <img src="https://picsum.photos/seed/${item.user}/30/30.jpg" alt="User" class="rounded-circle me-2" width="30" height="30">
+                    <div>
+                        <div class="fw-bold">${item.user}</div>
+                        <div class="small text-muted">Added a merit for <span class="badge bg-${categoryColors[item.category] || 'primary'}">${item.category}</span></div>
+                    </div>
+                `;
+                
+                recentActivity.appendChild(activityElement);
+            });
+        }
+        
+        // Update merit history table in admin panel
+        function updateMeritHistoryTable() {
+            const historyTable = document.getElementById('meritHistoryTable');
+            historyTable.innerHTML = '';
+            
+            if (meritDB.history.length === 0) {
+                historyTable.innerHTML = '<tr><td colspan="4" class="text-center">No merit history available</td></tr>';
+                return;
+            }
+            
+            // Get the last 10 entries
+            const recentHistory = meritDB.history.slice(0, 10);
+            
+            recentHistory.forEach(item => {
+                const row = document.createElement('tr');
+                
+                const date = new Date(item.timestamp);
+                const formattedDate = date.toLocaleString();
+                
+                row.innerHTML = `
+                    <td>${item.user}</td>
+                    <td><span class="badge bg-primary">${item.category}</span></td>
+                    <td>${item.reason}</td>
+                    <td>${formattedDate}</td>
+                `;
+                
+                historyTable.appendChild(row);
+            });
+        }
+        
+        // Category button click handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Update selected category
+                    selectedCategory = this.getAttribute('data-category');
+                });
+            });
+            
+            // Load data on page load
+            loadData();
+        });
+        
+        // Theme toggle
+        function toggleTheme() {
+            darkMode = !darkMode;
+            
+            if (darkMode) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeIcon').className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                document.getElementById('themeIcon').className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        // Modal functions
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('show');
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('show');
+        }
+        
+        function showAdminModal() {
+            document.getElementById('adminModal').classList.add('show');
+            updateMeritDisplay();
+        }
+        
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('show');
+        }
+        
+        // Login function
+        function login(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple authentication (in a real app, this would be server-side)
+            if (username === 'admin' && password === 'admin') {
+                isAdminLoggedIn = true;
+                closeLoginModal();
+                showAdminModal();
+            } else {
+                document.getElementById('loginAlert').classList.remove('d-none');
+            }
+        }
+        
+        // Admin tab switching
+        function switchAdminTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.admin-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Add active class to selected tab and content
+            document.querySelector(`.admin-nav-item:nth-child(${getTabIndex(tabName)})`).classList.add('active');
+            document.getElementById(`admin-${tabName}`).classList.add('active');
+        }
+        
+        function getTabIndex(tabName) {
+            const tabs = ['overview', 'merits', 'users', 'ai', 'settings'];
+            return tabs.indexOf(tabName) + 1;
+        }
+        
+        // Admin functions
+        function updateMeritCount() {
+            const newCount = parseInt(document.getElementById('newMeritCount').value);
+            
+            if (isNaN(newCount) || newCount < 0) {
+                showToast('error', 'Invalid Input', 'Please enter a valid positive number');
+                return;
+            }
+            
+            const oldCount = currentMeritCount;
+            currentMeritCount = newCount;
+            
+            // Add to history
+            const timestamp = new Date().toISOString();
+            const historyEntry = {
+                user: 'Admin',
+                category: 'admin',
+                reason: `Manually set merit count from ${oldCount} to ${newCount}`,
+                timestamp: timestamp
+            };
+            meritDB.history.unshift(historyEntry);
+            
+            saveData();
+            updateMeritDisplay();
+            updateChart();
+            showToast('success', 'Merit Count Updated', `Merit count has been set to ${newCount}`);
+        }
+        
+        function adjustMerit(amount) {
+            const oldCount = currentMeritCount;
+            currentMeritCount += amount;
+            
+            if (currentMeritCount < 0) {
+                currentMeritCount = 0;
+                showToast('error', 'Invalid Operation', 'Merit count cannot be negative');
+                return;
+            }
+            
+            // Add to history
+            const timestamp = new Date().toISOString();
+            const historyEntry = {
+                user: 'Admin',
+                category: 'admin',
+                reason: `Admin ${amount > 0 ? 'added' : 'removed'} ${Math.abs(amount)} merits`,
+                timestamp: timestamp
+            };
+            meritDB.history.unshift(historyEntry);
+            
+            saveData();
+            updateMeritDisplay();
+            updateChart();
+            showToast('success', 'Merit Count Adjusted', `Merit count has been ${amount > 0 ? 'increased' : 'decreased'} by ${Math.abs(amount)}`);
+        }
+        
+        // AI Assistant functions
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            const chatMessages = document.getElementById('aiChatMessages');
+            const userMessage = document.createElement('div');
+            userMessage.classList.add('mb-3', 'text-end');
+            userMessage.innerHTML = `
+                <div class="d-inline-block">
+                    <div class="badge bg-primary">${message}</div>
+                    <div class="small text-muted">You</div>
+                </div>
+            `;
+            chatMessages.appendChild(userMessage);
+            
+            // Clear input
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const aiResponse = document.createElement('div');
+                aiResponse.classList.add('ai-message-bubble');
+                
+                // Generate response based on keywords
+                let response = '';
+                if (message.includes('trend') || message.includes('statistics')) {
+                    response = 'Based on current data, your community is most active in the Helpfulness category, with a 15% increase in overall activity this week.';
+                } else if (message.includes('recommendation') || message.includes('suggest')) {
+                    response = 'I recommend focusing on promoting the Innovation category, as it currently has the lowest participation rate. Consider creating a special achievement for this category to encourage more engagement.';
+                } else if (message.includes('user') || message.includes('participant')) {
+                    response = 'Your top contributor is Alex Johnson with 42 merits. The average user contributes approximately 8 merits per week.';
+                } else {
+                    response = 'Thank you for your question. I can provide insights on trends, recommendations for improvement, and user statistics. What specific information would you like to know?';
+                }
+                
+                aiResponse.textContent = response;
+                chatMessages.appendChild(aiResponse);
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+        
+        // Toast notification function
+        function showToast(type, title, message) {
+            const toastContainer = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.classList.add('toast', `toast-${type}`);
+            
+            let icon = '';
+            if (type === 'success') icon = 'fas fa-check-circle';
+            else if (type === 'error') icon = 'fas fa-exclamation-circle';
+            else if (type === 'info') icon = 'fas fa-info-circle';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="toast-body">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+        
+        // Handle Enter key in AI input
+        document.getElementById('aiInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendAIMessage();
+            }
+        });
+    </script>
+</body>
+</html>
