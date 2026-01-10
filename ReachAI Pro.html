@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReachAI Pro - Advanced AI Cold Outreach Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .ai-gradient {
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .hover-scale {
+            transition: transform 0.2s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30% { transform: translateY(-10px); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        .ai-glow {
+            box-shadow: 0 0 20px rgba(0, 198, 255, 0.3);
+        }
+        
+        .real-time-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .upgrade-badge {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="glass-effect fixed top-0 left-0 right-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 ai-gradient rounded-lg flex items-center justify-center">
+                            <i class="fas fa-brain text-white"></i>
+                        </div>
+                        <span class="font-bold text-xl text-gray-900 dark:text-white">ReachAI Pro</span>
+                        <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full upgrade-badge">
+                            <i class="fas fa-bolt mr-1"></i>GPT-4 Powered
+                        </span>
+                    </div>
+                    <div class="hidden md:flex space-x-6">
+                        <button onclick="showPage('dashboard')" class="nav-link text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                            <i class="fas fa-chart-line mr-2"></i>Dashboard
+                            <span class="real-time-indicator ml-1"></span>
+                        </button>
+                        <button onclick="showPage('prospects')" class="nav-link text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                            <i class="fas fa-users mr-2"></i>Prospects
+                        </button>
+                        <button onclick="showPage('campaigns')" class="nav-link text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                            <i class="fas fa-envelope mr-2"></i>Campaigns
+                        </button>
+                        <button onclick="showPage('analytics')" class="nav-link text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                            <i class="fas fa-chart-bar mr-2"></i>Analytics
+                        </button>
+                        <button onclick="showPage('team')" class="nav-link text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                            <i class="fas fa-users-cog mr-2"></i>Team
+                        </button>
+                        <button onclick="showPage('ai-lab')" class="nav-link text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                            <i class="fas fa-flask mr-2"></i>AI Lab
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button onclick="toggleAISettings()" class="relative text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                            <i class="fas fa-robot"></i>
+                            <span class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full"></span>
+                        </button>
+                        <div id="aiSettings" class="hidden absolute right-0 mt-2 w-80 glass-effect rounded-lg shadow-xl p-4">
+                            <h3 class="font-semibold mb-3 text-gray-900 dark:text-white">AI Model Settings</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-sm text-gray-600 dark:text-gray-400">Current Model</label>
+                                    <select id="aiModel" class="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                        <option value="gpt-4">GPT-4 (Recommended)</option>
+                                        <option value="gpt-4-turbo">GPT-4 Turbo (Faster)</option>
+                                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Economy)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-600 dark:text-gray-400">Creativity Level</label>
+                                    <input type="range" id="creativityLevel" min="0" max="100" value="70" class="w-full mt-1">
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">Real-time Updates</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="realtimeToggle" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="toggleDarkMode()" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    <div class="relative">
+                        <button onclick="toggleNotifications()" class="relative text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                            <i class="fas fa-bell"></i>
+                            <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                        <div id="notifications" class="hidden absolute right-0 mt-2 w-80 glass-effect rounded-lg shadow-xl p-4">
+                            <h3 class="font-semibold mb-3 text-gray-900 dark:text-white">Real-time Notifications</h3>
+                            <div class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar" id="notificationsList">
+                                <!-- Notifications will be added here dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+                            <img src="https://picsum.photos/seed/user1/32/32" alt="User" class="w-8 h-8 rounded-full">
+                            <span class="hidden md:block text-sm font-medium">Sarah Chen</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 glass-effect rounded-lg shadow-xl py-2">
+                            <a href="#" onclick="showPage('profile')" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                                <i class="fas fa-user mr-2"></i>Profile
+                            </a>
+                            <a href="#" onclick="showPage('settings')" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                                <i class="fas fa-cog mr-2"></i>Settings
+                            </a>
+                            <a href="#" onclick="showPage('billing')" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                                <i class="fas fa-credit-card mr-2"></i>Billing
+                            </a>
+                            <hr class="my-2 border-gray-200 dark:border-gray-700">
+                            <a href="#" onclick="logout()" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <!-- Landing Page -->
+        <div id="landingPage" class="page">
+            <div class="min-h-screen flex items-center justify-center">
+                <div class="text-center max-w-4xl mx-auto">
+                    <div class="mb-8">
+                        <span class="px-4 py-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full text-sm font-medium">
+                            <i class="fas fa-sparkles mr-2"></i>Now powered by GPT-4 Turbo
+                        </span>
+                    </div>
+                    <h1 class="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 fade-in">
+                        Supercharge Your <span class="text-transparent bg-clip-text ai-gradient">Cold Outreach</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 dark:text-gray-400 mb-8 fade-in">
+                        Advanced AI-powered personalized emails with real-time tracking. Experience the future of sales outreach with GPT-4 integration.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 fade-in">
+                        <button onclick="showAuthModal('signup')" class="px-8 py-4 ai-gradient text-white rounded-lg font-semibold hover-scale shadow-lg ai-glow">
+                            Start Free Trial
+                        </button>
+                        <button onclick="showPage('dashboard')" class="px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg font-semibold hover-scale shadow-lg border border-gray-200 dark:border-gray-700">
+                            View Live Demo
+                        </button>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8 mt-16">
+                        <div class="text-center fade-in">
+                            <div class="w-16 h-16 ai-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-brain text-white text-2xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-900 dark:text-white">GPT-4 Turbo Integration</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Leverage the most powerful AI model for hyper-personalized outreach</p>
+                        </div>
+                        <div class="text-center fade-in" style="animation-delay: 0.1s">
+                            <div class="w-16 h-16 ai-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-satellite-dish text-white text-2xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Real-time Updates</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Live tracking of opens, clicks, and replies with instant notifications</p>
+                        </div>
+                        <div class="text-center fade-in" style="animation-delay: 0.2s">
+                            <div class="w-16 h-16 ai-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-rocket text-white text-2xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Auto-Upgrades</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Always have the latest AI models and features without manual updates</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Real-time Dashboard</h1>
+                <p class="text-gray-600 dark:text-gray-400">Live outreach performance powered by GPT-4</p>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="grid md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover-scale">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-envelope text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <span class="text-sm text-green-600 font-medium">+12%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white" id="emailsSentCount">2,847</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Emails Sent</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover-scale">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-envelope-open text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <span class="text-sm text-green-600 font-medium">+8%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white" id="openRate">68.4%</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Open Rate</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover-scale">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-reply text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <span class="text-sm text-green-600 font-medium">+15%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white" id="replyRate">24.7%</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Reply Rate</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover-scale">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-handshake text-yellow-600 dark:text-yellow-400"></i>
+                        </div>
+                        <span class="text-sm text-green-600 font-medium">+22%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white" id="conversionsCount">142</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Conversions</p>
+                </div>
+            </div>
+            
+            <!-- Real-time Activity Feed -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Real-time Email Performance</h3>
+                    <canvas id="realtimeChart" width="400" height="200"></canvas>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Live Activity Feed</h3>
+                    <div class="space-y-4 max-h-64 overflow-y-auto custom-scrollbar" id="liveActivityFeed">
+                        <!-- Live activities will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Lab Page -->
+        <div id="ai-lab" class="page hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">AI Laboratory</h1>
+                <p class="text-gray-600 dark:text-gray-400">Experiment with advanced AI models and features</p>
+            </div>
+            
+            <!-- AI Model Comparison -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Model Performance Comparison</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">GPT-4</h4>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full text-xs">Recommended</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600 dark:text-gray-400">Quality Score</span>
+                                <span class="font-medium">98%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600 dark:text-gray-400">Response Time</span>
+                                <span class="font-medium">2.3s</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600 dark:text-gray-400">Cost/Email</span>
+                                <span class="font-medium">$0.03</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">GPT-4 Turbo</h4>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full text-xs">Fastest</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600 dark:text-gray-400">Quality Score</span>
+                                <span class="font-medium">95%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600 dark:text-gray-400">Response Time</span>
+                                <span class="font-medium">0.8s</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600 dark:text-gray-400">Cost/Email</span>
+                                <span class="font-medium">$0.02</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">GPT-3.5 Turbo</h4>
+                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 rounded-full text-xs">Economy</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600 dark:text-gray-400">Quality Score</span>
+                                <span class="font-medium">85%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600 dark:text-gray-400">Response Time</span>
+                                <span class="font-medium">0.5s</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600 dark:text-gray-400">Cost/Email</span>
+                                <span class="font-medium">$0.01</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Features Testing -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Test AI Email Generation</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Test Scenario</label>
+                            <select id="testScenario" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option>Cold Outreach to CEO</option>
+                                <option>Follow-up after Meeting</option>
+                                <option>Product Introduction</option>
+                                <option>Re-engagement Campaign</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Prospect Info</label>
+                            <textarea id="testProspectInfo" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Enter prospect details..."></textarea>
+                        </div>
+                        <button onclick="testAIGeneration()" class="w-full px-4 py-2 ai-gradient text-white rounded-lg font-medium hover-scale">
+                            <i class="fas fa-flask mr-2"></i>Run AI Test
+                        </button>
+                        <div id="aiTestResult" class="hidden p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Generated Email:</h4>
+                            <p id="generatedEmailContent" class="text-sm text-gray-700 dark:text-gray-300"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">AI Model Updates</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-semibold text-green-800 dark:text-green-200">New Update Available</h4>
+                                <span class="text-xs text-green-600 dark:text-green-400">2 hours ago</span>
+                            </div>
+                            <p class="text-sm text-green-700 dark:text-green-300 mb-3">GPT-4 Turbo v2.0 with improved personalization and 30% faster response time.</p>
+                            <button onclick="updateAIModel()" class="px-3 py-1 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700">
+                                Update Now
+                            </button>
+                        </div>
+                        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-semibold text-gray-900 dark:text-white">Previous Update</h4>
+                                <span class="text-xs text-gray-500">3 days ago</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Enhanced reply detection and sentiment analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prospects Page -->
+        <div id="prospects" class="page hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Smart Prospects</h1>
+                    <p class="text-gray-600 dark:text-gray-400">AI-enhanced prospect management with real-time insights</p>
+                </div>
+                <button onclick="showAddProspectModal()" class="px-4 py-2 ai-gradient text-white rounded-lg font-medium hover-scale">
+                    <i class="fas fa-plus mr-2"></i>Add Prospect
+                </button>
+            </div>
+            
+            <!-- Search and Filters -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <div class="relative">
+                            <input type="text" placeholder="Search prospects with AI..." class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <select class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>All Status</option>
+                        <option>New</option>
+                        <option>Contacted</option>
+                        <option>Replied</option>
+                        <option>Converted</option>
+                    </select>
+                    <select class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>All Tags</option>
+                        <option>Enterprise</option>
+                        <option>Startup</option>
+                        <option>SaaS</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Prospects Table -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    <input type="checkbox" class="rounded">
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Prospect</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">AI Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Last Activity</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td class="px-6 py-4"><input type="checkbox" class="rounded"></td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <img src="https://picsum.photos/seed/prospect1/40/40" alt="John" class="w-10 h-10 rounded-full mr-3">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">John Doe</p>
+                                            <p class="text-xs text-gray-500">john@company.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mr-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 92%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white">92%</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full">Replied</span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">2 hours ago</td>
+                                <td class="px-6 py-4">
+                                    <button onclick="generateEmail('John Doe')" class="text-blue-600 hover:text-blue-800 mr-3">
+                                        <i class="fas fa-robot"></i>
+                                    </button>
+                                    <button onclick="editProspect('John Doe')" class="text-gray-600 hover:text-gray-800 mr-3">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteProspect('John Doe')" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td class="px-6 py-4"><input type="checkbox" class="rounded"></td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <img src="https://picsum.photos/seed/prospect2/40/40" alt="Jane" class="w-10 h-10 rounded-full mr-3">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">Jane Smith</p>
+                                            <p class="text-xs text-gray-500">jane@startup.io</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mr-2">
+                                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 78%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white">78%</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 rounded-full">Contacted</span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">1 day ago</td>
+                                <td class="px-6 py-4">
+                                    <button onclick="generateEmail('Jane Smith')" class="text-blue-600 hover:text-blue-800 mr-3">
+                                        <i class="fas fa-robot"></i>
+                                    </button>
+                                    <button onclick="editProspect('Jane Smith')" class="text-gray-600 hover:text-gray-800 mr-3">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteProspect('Jane Smith')" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaigns Page -->
+        <div id="campaigns" class="page hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">AI-Optimized Campaigns</h1>
+                    <p class="text-gray-600 dark:text-gray-400">Smart campaigns with real-time optimization</p>
+                </div>
+                <button onclick="showCreateCampaignModal()" class="px-4 py-2 ai-gradient text-white rounded-lg font-medium hover-scale">
+                    <i class="fas fa-plus mr-2"></i>New Campaign
+                </button>
+            </div>
+            
+            <!-- Campaign Cards -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover-scale">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-semibold text-lg text-gray-900 dark:text-white">Q4 Outreach</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">AI-Optimized</p>
+                        </div>
+                        <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full">Active</span>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Sent</span>
+                            <span class="font-medium text-gray-900 dark:text-white">342/500</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div class="ai-gradient h-2 rounded-full" style="width: 68%"></div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">72%</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Open Rate</p>
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">28%</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Reply Rate</p>
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">45</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Conversions</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="viewCampaign('Q4 Outreach')" class="flex-1 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600">
+                            View Details
+                        </button>
+                        <button onclick="pauseCampaign('Q4 Outreach')" class="px-3 py-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 rounded-lg text-sm font-medium hover:bg-yellow-200 dark:hover:bg-yellow-800">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div id="analytics" class="page hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Advanced Analytics</h1>
+                <p class="text-gray-600 dark:text-gray-400">Real-time insights powered by AI</p>
+            </div>
+            
+            <!-- Date Range Selector -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex space-x-2">
+                        <button class="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-medium">Last 7 Days</button>
+                        <button class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm font-medium">Last 30 Days</button>
+                        <button class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm font-medium">Last 3 Months</button>
+                        <button class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm font-medium">Custom Range</button>
+                    </div>
+                    <button class="px-4 py-2 ai-gradient text-white rounded-lg text-sm font-medium hover-scale">
+                        <i class="fas fa-download mr-2"></i>Export Report
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Analytics Charts -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Real-time Performance</h3>
+                    <canvas id="realtimeAnalyticsChart" width="400" height="200"></canvas>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">AI Model Performance</h3>
+                    <canvas id="aiPerformanceChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Page -->
+        <div id="team" class="page hidden">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Team Management</h1>
+                    <p class="text-gray-600 dark:text-gray-400">Collaborate with AI-powered insights</p>
+                </div>
+                <button onclick="showInviteModal()" class="px-4 py-2 ai-gradient text-white rounded-lg font-medium hover-scale">
+                    <i class="fas fa-user-plus mr-2"></i>Invite Member
+                </button>
+            </div>
+            
+            <!-- Team Stats -->
+            <div class="grid md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Members</h3>
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">12</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">3 admins, 9 members</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400">Active Now</h3>
+                        <i class="fas fa-circle text-green-500 text-xs"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">8</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">67% activity rate</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400">AI Credits Used</h3>
+                        <i class="fas fa-bolt text-yellow-600"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">8,432</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Of 10,000 this month</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Cost</h3>
+                        <i class="fas fa-dollar-sign text-green-600"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">$599</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">$49 per seat</p>
+                </div>
+            </div>
+            
+            <!-- Team Members Table -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Member</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Role</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">AI Usage</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <img src="https://picsum.photos/seed/sarah/40/40" alt="Sarah" class="w-10 h-10 rounded-full mr-3">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">Sarah Chen</p>
+                                            <p class="text-xs text-gray-500">sarah@company.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full">Admin</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mr-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                                        </div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">750/1000</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Active</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <button onclick="editMember('Sarah Chen')" class="text-blue-600 hover:text-blue-800 mr-3">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="removeMember('Sarah Chen')" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI Email Generation Modal -->
+    <div id="aiEmailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <i class="fas fa-robot text-blue-600 mr-2"></i>GPT-4 Email Generator
+                    </h2>
+                    <button onclick="closeModal('aiEmailModal')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Prospect Information</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+                                <input type="text" id="prospectName" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" value="John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company</label>
+                                <input type="text" id="prospectCompany" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" value="TechCorp Inc.">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
+                                <input type="text" id="prospectRole" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" value="VP of Engineering">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Key Points</label>
+                                <textarea id="keyPoints" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="e.g., Recently raised Series B, expanding engineering team"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">AI Model</label>
+                                <select id="emailAIModel" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option value="gpt-4">GPT-4 (Highest Quality)</option>
+                                    <option value="gpt-4-turbo">GPT-4 Turbo (Fastest)</option>
+                                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Economy)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tone</label>
+                                <select id="emailTone" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option>Professional</option>
+                                    <option>Casual</option>
+                                    <option>Friendly</option>
+                                    <option>Formal</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Generated Email</h3>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 min-h-[400px]">
+                            <div id="emailContent" class="text-gray-700 dark:text-gray-300">
+                                <p class="mb-4">Subject: Reaching out about [Your Product/Service]</p>
+                                <p class="mb-4">Hi John,</p>
+                                <p class="mb-4">I hope this email finds you well. I came across TechCorp's recent Series B funding announcement and was impressed by your company's growth trajectory.</p>
+                                <p class="mb-4">As VP of Engineering at TechCorp, you're likely focused on scaling your engineering team while maintaining code quality. Our platform has helped similar companies reduce onboarding time by 40% and improve code review efficiency.</p>
+                                <p class="mb-4">Would you be open to a brief 15-minute call next week to discuss how we might be able to support your engineering goals?</p>
+                                <p class="mb-4">Best regards,<br>Sarah</p>
+                            </div>
+                            <div id="typingIndicator" class="hidden mt-4">
+                                <div class="typing-indicator">
+                                    <div class="typing-dot"></div>
+                                    <div class="typing-dot"></div>
+                                    <div class="typing-dot"></div>
+                                </div>
+                                <span class="text-sm text-gray-500 ml-2">GPT-4 is generating...</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3 mt-4">
+                            <button onclick="generateAIEmail()" class="flex-1 px-4 py-2 ai-gradient text-white rounded-lg font-medium hover-scale">
+                                <i class="fas fa-robot mr-2"></i>Generate with AI
+                            </button>
+                            <button onclick="regenerateAIEmail()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600">
+                                <i class="fas fa-redo mr-2"></i>Regenerate
+                            </button>
+                            <button onclick="sendEmail()" class="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700">
+                                <i class="fas fa-paper-plane mr-2"></i>Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Campaign Modal -->
+    <div id="createCampaignModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full mx-4">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Create AI-Optimized Campaign</h2>
+                    <button onclick="closeModal('createCampaignModal')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Campaign Name</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="e.g., Q4 Outreach">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">AI Optimization Level</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            <option>Maximum (GPT-4)</option>
+                            <option>Balanced (GPT-4 Turbo)</option>
+                            <option>Economy (GPT-3.5 Turbo)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Prospects</label>
+                        <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4 max-h-40 overflow-y-auto">
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" checked>
+                                <span class="text-sm text-gray-700 dark:text-gray-300">All New Prospects (150)</span>
+                            </label>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2">
+                                <span class="text-sm text-gray-700 dark:text-gray-300">SaaS Companies (85)</span>
+                            </label>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" checked>
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Enterprise Leads (42)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Template</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            <option>AI-Generated Personalized</option>
+                            <option>Value Proposition</option>
+                            <option>Follow-up Sequence</option>
+                            <option>Custom Template</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Send Schedule</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="date" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            <input type="time" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 pt-4">
+                        <button onclick="createCampaign()" class="flex-1 px-4 py-2 ai-gradient text-white rounded-lg font-medium hover-scale">
+                            Create AI Campaign
+                        </button>
+                        <button onclick="closeModal('createCampaignModal')" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 ai-gradient rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-brain text-white text-2xl"></i>
+                    </div>
+                    <h2 id="authTitle" class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sign Up</h2>
+                    <p id="authSubtitle" class="text-gray-600 dark:text-gray-400">Start your free 14-day trial with GPT-4</p>
+                </div>
+                
+                <form id="authForm" class="space-y-4">
+                    <div id="nameField" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="John Doe">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                        <input type="email" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="john@company.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                        <input type="password" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="••••••••">
+                    </div>
+                    <div id="companyField" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Acme Corp">
+                    </div>
+                    <button type="submit" class="w-full px-4 py-2 ai-gradient text-white rounded-lg font-medium hover-scale">
+                        Sign Up
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <span id="authSwitchText">Already have an account?</span>
+                        <button onclick="switchAuthMode()" class="text-blue-600 hover:text-blue-800 font-medium">
+                            <span id="authSwitchLink">Sign In</span>
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 slide-in">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="toastMessage">Success!</span>
+        </div>
+    </div>
+
+    <!-- Upgrade Notification -->
+    <div id="upgradeNotification" class="hidden fixed bottom-4 left-4 bg-blue-600 text-white p-4 rounded-lg shadow-lg z-50 max-w-sm">
+        <div class="flex items-start">
+            <i class="fas fa-bolt text-yellow-300 mr-3 mt-1"></i>
+            <div>
+                <h4 class="font-semibold">AI Model Update Available</h4>
+                <p class="text-sm mt-1">GPT-4 Turbo v2.0 is now available with improved performance.</p>
+                <button onclick="updateAIModel()" class="mt-2 px-3 py-1 bg-white text-blue-600 rounded text-sm font-medium hover:bg-gray-100">
+                    Update Now
+                </button>
+            </div>
+            <button onclick="closeUpgradeNotification()" class="ml-3 text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Chart.js
+        let realtimeChart, realtimeAnalyticsChart, aiPerformanceChart;
+        
+        // Mock OpenAI API configuration
+        const OPENAI_API_KEY = 'sk-demo-key'; // In production, this would be securely stored
+        const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+        
+        // WebSocket for real-time updates
+        let websocket;
+        let realtimeEnabled = true;
+
+        // Initialize WebSocket connection
+        function initWebSocket() {
+            // In a real implementation, this would connect to your WebSocket server
+            // For demo purposes, we'll simulate real-time updates
+            if (realtimeEnabled) {
+                simulateRealtimeUpdates();
+            }
+        }
+
+        // Simulate real-time updates
+        function simulateRealtimeUpdates() {
+            // Update dashboard stats
+            setInterval(() => {
+                if (document.getElementById('dashboard').classList.contains('hidden')) return;
+                
+                // Randomly update stats
+                const emailsSent = document.getElementById('emailsSentCount');
+                const currentSent = parseInt(emailsSent.textContent.replace(',', ''));
+                emailsSent.textContent = (currentSent + Math.floor(Math.random() * 3)).toLocaleString();
+                
+                // Add to activity feed
+                addLiveActivity();
+            }, 5000);
+            
+            // Update notifications
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    addNotification();
+                }
+            }, 8000);
+        }
+
+        // Add live activity to feed
+        function addLiveActivity() {
+            const activities = [
+                { icon: 'fa-envelope-open', color: 'blue', text: 'Email opened by', prospect: getRandomProspect() },
+                { icon: 'fa-reply', color: 'green', text: 'New reply from', prospect: getRandomProspect() },
+                { icon: 'fa-mouse-pointer', color: 'purple', text: 'Link clicked by', prospect: getRandomProspect() },
+                { icon: 'fa-user-plus', color: 'yellow', text: 'New prospect added:', prospect: getRandomProspect() }
+            ];
+            
+            const activity = activities[Math.floor(Math.random() * activities.length)];
+            const feed = document.getElementById('liveActivityFeed');
+            
+            const activityElement = document.createElement('div');
+            activityElement.className = 'flex items-start space-x-3 slide-in';
+            activityElement.innerHTML = `
+                <div class="w-8 h-8 bg-${activity.color}-100 dark:bg-${activity.color}-900 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas ${activity.icon} text-${activity.color}-600 dark:text-${activity.color}-400 text-xs"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm text-gray-900 dark:text-white">${activity.text} ${activity.prospect}</p>
+                    <p class="text-xs text-gray-500">Just now</p>
+                </div>
+            `;
+            
+            feed.insertBefore(activityElement, feed.firstChild);
+            
+            // Keep only the latest 10 activities
+            while (feed.children.length > 10) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+
+        // Get random prospect name
+        function getRandomProspect() {
+            const prospects = ['John Doe', 'Jane Smith', 'Mike Johnson', 'Emma Davis', 'Alex Wilson', 'Sarah Brown'];
+            return prospects[Math.floor(Math.random() * prospects.length)];
+        }
+
+        // Add notification
+        function addNotification() {
+            const notifications = [
+                { icon: 'fa-reply', text: 'New reply from', prospect: getRandomProspect() },
+                { icon: 'fa-chart-line', text: 'Campaign', prospect: 'Q4 Outreach' },
+                { icon: 'fa-bullhorn', text: 'AI optimization completed for', prospect: 'SaaS Campaign' }
+            ];
+            
+            const notification = notifications[Math.floor(Math.random() * notifications.length)];
+            const list = document.getElementById('notificationsList');
+            
+            const notificationElement = document.createElement('div');
+            notificationElement.className = 'p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded cursor-pointer slide-in';
+            notificationElement.innerHTML = `
+                <p class="text-sm text-gray-700 dark:text-gray-300">${notification.text} ${notification.prospect}</p>
+                <p class="text-xs text-gray-500">Just now</p>
+            `;
+            
+            list.insertBefore(notificationElement, list.firstChild);
+            
+            // Keep only the latest 5 notifications
+            while (list.children.length > 5) {
+                list.removeChild(list.lastChild);
+            }
+        }
+
+        // Page Management
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-blue-600', 'dark:text-blue-400');
+            });
+            event.target.closest('.nav-link').classList.add('text-blue-600', 'dark:text-blue-400');
+            
+            // Initialize charts when analytics page is shown
+            if (pageId === 'analytics') {
+                setTimeout(initAnalyticsCharts, 100);
+            }
+            if (pageId === 'dashboard') {
+                setTimeout(initDashboardChart, 100);
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        }
+
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark');
+        }
+
+        // User Menu Toggle
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // AI Settings Toggle
+        function toggleAISettings() {
+            const settings = document.getElementById('aiSettings');
+            settings.classList.toggle('hidden');
+        }
+
+        // Notifications Toggle
+        function toggleNotifications() {
+            const notifications = document.getElementById('notifications');
+            notifications.classList.toggle('hidden');
+        }
+
+        // Modal Management
+        function showAddProspectModal() {
+            showToast('Add prospect modal would open here');
+        }
+
+        function showCreateCampaignModal() {
+            document.getElementById('createCampaignModal').classList.remove('hidden');
+        }
+
+        function showInviteModal() {
+            showToast('Invite team member modal would open here');
+        }
+
+        function showAuthModal(mode) {
+            const modal = document.getElementById('authModal');
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+            const nameField = document.getElementById('nameField');
+            const companyField = document.getElementById('companyField');
+            const submitBtn = document.querySelector('#authForm button[type="submit"]');
+            const switchText = document.getElementById('authSwitchText');
+            const switchLink = document.getElementById('authSwitchLink');
+            
+            if (mode === 'signup') {
+                title.textContent = 'Sign Up';
+                subtitle.textContent = 'Start your free 14-day trial with GPT-4';
+                nameField.classList.remove('hidden');
+                companyField.classList.remove('hidden');
+                submitBtn.textContent = 'Sign Up';
+                switchText.textContent = 'Already have an account?';
+                switchLink.textContent = 'Sign In';
+            } else {
+                title.textContent = 'Sign In';
+                subtitle.textContent = 'Welcome back!';
+                nameField.classList.add('hidden');
+                companyField.classList.add('hidden');
+                submitBtn.textContent = 'Sign In';
+                switchText.textContent = "Don't have an account?";
+                switchLink.textContent = 'Sign Up';
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function switchAuthMode() {
+            const title = document.getElementById('authTitle');
+            const isSignup = title.textContent === 'Sign Up';
+            showAuthModal(isSignup ? 'signin' : 'signup');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // AI Email Generation with OpenAI
+        async function generateEmail(prospectName) {
+            document.getElementById('aiEmailModal').classList.remove('hidden');
+            document.getElementById('prospectName').value = prospectName;
+        }
+
+        async function generateAIEmail() {
+            const indicator = document.getElementById('typingIndicator');
+            const content = document.getElementById('emailContent');
+            const model = document.getElementById('emailAIModel').value;
+            
+            indicator.classList.remove('hidden');
+            content.style.opacity = '0.5';
+            
+            // Simulate API call to OpenAI
+            setTimeout(() => {
+                const prospectName = document.getElementById('prospectName').value;
+                const prospectCompany = document.getElementById('prospectCompany').value;
+                const prospectRole = document.getElementById('prospectRole').value;
+                const keyPoints = document.getElementById('keyPoints').value;
+                const tone = document.getElementById('emailTone').value;
+                
+                // In a real implementation, this would call the OpenAI API
+                // const response = await fetch(OPENAI_API_URL, {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Authorization': `Bearer ${OPENAI_API_KEY}`
+                //     },
+                //     body: JSON.stringify({
+                //         model: model,
+                //         messages: [
+                //             {
+                //                 role: 'system',
+                //                 content: `You are a professional email writer. Generate a personalized cold outreach email with a ${tone} tone.`
+                //             },
+                //             {
+                //                 role: 'user',
+                //                 content: `Generate an email for ${prospectName}, ${prospectRole} at ${prospectCompany}. Key points: ${keyPoints}.`
+                //             }
+                //         ],
+                //         max_tokens: 500,
+                //         temperature: 0.7
+                //     })
+                // });
+                // const data = await response.json();
+                // const generatedEmail = data.choices[0].message.content;
+                
+                // For demo, use a template
+                const templates = [
+                    `Subject: Reaching out about [Your Product/Service]
+
+Hi ${prospectName},
+
+I hope this email finds you well. I've been following ${prospectCompany}'s journey and am impressed with your recent achievements.
+
+As ${prospectRole}, you're likely focused on [relevant challenge based on role]. Our solution has helped similar companies achieve [specific result].
+
+ ${keyPoints ? `Given that ${keyPoints},` : ''} I believe there could be a strong fit.
+
+Would you be open to a brief 15-minute call next week to explore how we might support your goals?
+
+Best regards,
+Sarah`,
+                    
+                    `Subject: Quick question about ${prospectCompany}
+
+Hi ${prospectName},
+
+I came across your profile and noticed your experience at ${prospectCompany}. With your background as ${prospectRole}, I thought you might find value in what we're building.
+
+We help teams like yours [specific value proposition]. ${keyPoints ? `Given that ${keyPoints},` : ''} I believe there could be a strong fit.
+
+Are you available for a quick chat next Tuesday or Thursday?
+
+Cheers,
+Sarah`,
+                    
+                    `Subject: ${prospectCompany} + [Your Company]
+
+Hi ${prospectName},
+
+I'm reaching out because I believe we can help ${prospectCompany} [achieve specific goal].
+
+Many ${prospectRole}s I work with struggle with [common pain point]. Our platform addresses this by [solution].
+
+I'd love to learn more about your current setup and share how we've helped similar companies.
+
+Would 15 minutes work for you next week?
+
+Best,
+Sarah`
+                ];
+                
+                content.innerHTML = `<pre class="whitespace-pre-wrap font-sans">${templates[Math.floor(Math.random() * templates.length)]}</pre>`;
+                indicator.classList.add('hidden');
+                content.style.opacity = '1';
+                showToast(`Email generated with ${model}!`);
+            }, 2000);
+        }
+
+        function regenerateAIEmail() {
+            generateAIEmail();
+        }
+
+        function sendEmail() {
+            closeModal('aiEmailModal');
+            showToast('Email sent successfully!');
+            addNotification();
+        }
+
+        // AI Lab Functions
+        function testAIGeneration() {
+            const scenario = document.getElementById('testScenario').value;
+            const prospectInfo = document.getElementById('testProspectInfo').value;
+            const resultDiv = document.getElementById('aiTestResult');
+            const contentDiv = document.getElementById('generatedEmailContent');
+            
+            // Show loading state
+            resultDiv.classList.add('hidden');
+            
+            // Simulate AI processing
+            setTimeout(() => {
+                const testEmail = `Subject: AI-Generated ${scenario} Email
+                
+Hi [Prospect Name],
+
+This is a test email generated by GPT-4 for the "${scenario}" scenario.
+
+ ${prospectInfo ? `Based on the provided information: ${prospectInfo}` : 'No specific information provided.'}
+
+This demonstrates the AI's ability to generate context-aware, personalized content for different outreach scenarios.
+
+Best regards,
+AI Test System`;
+                
+                contentDiv.textContent = testEmail;
+                resultDiv.classList.remove('hidden');
+                showToast('AI test completed successfully!');
+            }, 1500);
+        }
+
+        function updateAIModel() {
+            showToast('AI model updating... This will take a moment.');
+            setTimeout(() => {
+                showToast('AI model updated to GPT-4 Turbo v2.0!');
+                closeUpgradeNotification();
+            }, 2000);
+        }
+
+        // Campaign Actions
+        function viewCampaign(name) {
+            showToast(`Viewing campaign: ${name}`);
+        }
+
+        function pauseCampaign(name) {
+            showToast(`Campaign "${name}" paused`);
+        }
+
+        function createCampaign() {
+            closeModal('createCampaignModal');
+            showToast('AI-optimized campaign created successfully!');
+        }
+
+        // Prospect Actions
+        function editProspect(name) {
+            showToast(`Editing prospect: ${name}`);
+        }
+
+        function deleteProspect(name) {
+            if (confirm(`Are you sure you want to delete ${name}?`)) {
+                showToast(`Prospect ${name} deleted`);
+            }
+        }
+
+        // Team Actions
+        function editMember(name) {
+            showToast(`Editing member: ${name}`);
+        }
+
+        function removeMember(name) {
+            if (confirm(`Are you sure you want to remove ${name} from the team?`)) {
+                showToast(`Member ${name} removed`);
+            }
+        }
+
+        // Auth
+        document.getElementById('authForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            closeModal('authModal');
+            showPage('dashboard');
+            showToast('Welcome to ReachAI Pro!');
+        });
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                showPage('landingPage');
+                showToast('Logged out successfully');
+            }
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Upgrade Notification
+        function showUpgradeNotification() {
+            setTimeout(() => {
+                document.getElementById('upgradeNotification').classList.remove('hidden');
+            }, 5000);
+        }
+
+        function closeUpgradeNotification() {
+            document.getElementById('upgradeNotification').classList.add('hidden');
+        }
+
+        // Initialize Dashboard Chart
+        function initDashboardChart() {
+            const ctx = document.getElementById('realtimeChart');
+            if (!ctx) return;
+            
+            if (realtimeChart) {
+                realtimeChart.destroy();
+            }
+            
+            realtimeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Emails Sent',
+                        data: [65, 78, 90, 81, 96, 55, 40],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Replies',
+                        data: [28, 48, 40, 39, 46, 27, 20],
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize Analytics Charts
+        function initAnalyticsCharts() {
+            // Real-time Analytics Chart
+            const realtimeCtx = document.getElementById('realtimeAnalyticsChart');
+            if (realtimeCtx) {
+                if (realtimeAnalyticsChart) realtimeAnalyticsChart.destroy();
+                
+                realtimeAnalyticsChart = new Chart(realtimeCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                        datasets: [{
+                            label: 'Open Rate',
+                            data: [45, 52, 68, 72, 75, 65, 48],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'Reply Rate',
+                            data: [12, 18, 24, 28, 26, 20, 14],
+                            borderColor: 'rgb(168, 85, 247)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // AI Performance Chart
+            const aiCtx = document.getElementById('aiPerformanceChart');
+            if (aiCtx) {
+                if (aiPerformanceChart) aiPerformanceChart.destroy();
+                
+                aiPerformanceChart = new Chart(aiCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['GPT-4', 'GPT-4 Turbo', 'GPT-3.5 Turbo'],
+                        datasets: [{
+                            label: 'Quality Score',
+                            data: [98, 95, 85],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.8)',
+                                'rgba(168, 85, 247, 0.8)',
+                                'rgba(34, 197, 94, 0.8)'
+                            ]
+                        }, {
+                            label: 'Response Time (s)',
+                            data: [2.3, 0.8, 0.5],
+                            backgroundColor: [
+                                'rgba(239, 68, 68, 0.8)',
+                                'rgba(245, 158, 11, 0.8)',
+                                'rgba(16, 185, 129, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.relative')) {
+                document.getElementById('userMenu').classList.add('hidden');
+                document.getElementById('notifications').classList.add('hidden');
+                document.getElementById('aiSettings').classList.add('hidden');
+            }
+        });
+
+        // Real-time toggle
+        document.getElementById('realtimeToggle').addEventListener('change', (e) => {
+            realtimeEnabled = e.target.checked;
+            if (realtimeEnabled) {
+                initWebSocket();
+                showToast('Real-time updates enabled');
+            } else {
+                showToast('Real-time updates disabled');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show landing page by default
+            document.getElementById('landingPage').classList.remove('hidden');
+            
+            // Initialize WebSocket for real-time updates
+            initWebSocket();
+            
+            // Show upgrade notification after a delay
+            showUpgradeNotification();
+            
+            // Add initial activities to the feed
+            for (let i = 0; i < 3; i++) {
+                addLiveActivity();
+            }
+        });
+    </script>
+</body>
+</html>
